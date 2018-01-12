@@ -107,5 +107,11 @@ class JoinDbController < ApplicationController
 
         render json(connection_details)
     end
+
+    private
+    def new_db
+        join_db = JoinDb.create!(user_id)
+        return join_db
+    end
 end
 
