@@ -3,8 +3,8 @@ class CreateJoinDbs < ActiveRecord::Migration[5.0]
     create_table :join_dbs do |t|
       t.string :name
       t.string :host
-      t.int :port
-      t.int :user_id
+      t.integer :port
+      t.references :user , foreign_key: true
 
       t.timestamps
     end
