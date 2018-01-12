@@ -57,11 +57,11 @@ class JoinDbController < ApplicationController
         db_user = params[:db_user]
         db_pass = params[:db_pass]
 
-        remote_db_user = remote_db.username
-        remote_db_pass = remote_db.password
+        remote_db_user = remote_db.remote_user
+        remote_db_pass = remote_db.password #TODO: We should not store this
         remote_host = remote_db.host
         remote_port = remote_db.port
-        remote_db_name = remote_db.join_db
+        remote_db_name = remote_db.database_name
         remote_schema = remote_db.schema
 
         case fdw_type
