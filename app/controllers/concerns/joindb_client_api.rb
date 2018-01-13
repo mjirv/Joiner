@@ -1,6 +1,5 @@
-class JoinDbController < ApplicationController
-    include JoinDbClient
-    before_Filter :authorize
+module JoinDbClientApi
+    require_relative 'joindb_client_methods'
 
     # POST /joindb?db_user=XXX&db_pass=XXX&
     # Creates a db and associates it to the user
@@ -23,11 +22,6 @@ class JoinDbController < ApplicationController
         # TODO: Check for failure, give error message as appropriate
         render json(get_db(db.host, db.name))
     end
-
-    def login
-        # TODO: This probably isn't necessary, and can be handled
-        # by the overall user/session controller
-    end
     
     # GET /joindb/:id
     def get_db(db_host, db_name)
@@ -44,7 +38,7 @@ class JoinDbController < ApplicationController
         }
     end
     
-    # POST /joindb/:id/add_fdw/:remote_db_id
+    # Called by POST /remotedb
     # Adds a foreign data wrapper 
     def add_db_prompt
         join_db = JoinDb.find(params[:id])
@@ -75,7 +69,7 @@ class JoinDbController < ApplicationController
         # TODO: Return something indicating if we've succeeded or failed
     end
 
-    # POST /joindb/:id/add_csv/:csv_id
+    # Called by POST /remotedb
     # Adds CSVs as new tables
     def add_csv_prompt
         join_db = JoinDb.find(params[:id])
@@ -92,7 +86,7 @@ class JoinDbController < ApplicationController
         # TODO: Return something indicating if we've succeeded or failed
     end
 
-    # GET /joindb/:id/details
+    # Called by GET /joindb/:id
     def get_details_prompt
         join_db = JoinDb.find(params[:id])
         db_info = get_db(params[:db_host], params[:db_name])
