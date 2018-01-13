@@ -1,5 +1,6 @@
 class JoinDbController < ApplicationController
     include JoinDbClient
+    before_Filter :authorize
 
     # POST /joindb?db_user=XXX&db_pass=XXX&
     # Creates a db and associates it to the user
