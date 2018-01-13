@@ -4,6 +4,7 @@ class RemoteDbsController < ApplicationController
 
     def show
         # Show RemoteDb details
+        @remote_db = RemoteDb.find(params[:id])
     end
 
     def new

@@ -4,7 +4,9 @@ class JoinDbsController < ApplicationController
 
     def show
         # Show JoinDb details
+        @join_db = JoinDb.find(params[:id])
         # Show RemoteDbs
+        @remote_dbs = RemoteDb.where(join_db_id: params[:id])
     end
 
     def new
