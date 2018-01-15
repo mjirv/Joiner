@@ -13,8 +13,8 @@
 </p>
 <% @remote_dbs.each do |rdb| %>
     <p>
-        <em><%= rdb.name %></em>
-        Edit | Delete
+        <b><%= rdb.name %></b>
+        Edit | <%= link_to 'Delete', delete_remote_db_path(rdb.id) %>
         <ul>
             <li>DB Type: <%= rdb.db_type %></li>
             <li>Host: <%= rdb.host %></li>

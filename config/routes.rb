@@ -19,5 +19,5 @@ Rails.application.routes.draw do
   get 'remote_dbs/new' => 'remote_dbs#new'  
   get '/remote_dbs/:id' => 'remote_dbs#show'
   post '/remote_dbs' => 'remote_dbs#create'
-  delete '/remote_dbs/:id' => 'remote_dbs#destroy'
+  get '/remote_dbs/:id/delete' => 'remote_dbs#destroy', as: 'delete_remote_db'
 end
