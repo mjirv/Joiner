@@ -1,5 +1,15 @@
 <h1>Your Databases</h1>
 
-<%= @join_dbs.each do |jdb| %>
-    <%= jdb.name %>
-<% end %>
+<table>
+    <% @join_dbs.each do |jdb| %>
+        <tr>
+            <td><%= link_to jdb.name, join_db_path(jdb.id) %></td>
+            <td>Edit</td>
+            <td><%= link_to 'Delete', delete_join_db_path(jdb.id), method: :post, data: { confirm: "Are you sure?" } %></td>
+        </tr>
+    <% end %>
+</table>
+
+<p>
+    <%= link_to 'Add JoinDB', join_dbs_new_path %>
+</p>

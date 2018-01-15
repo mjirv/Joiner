@@ -1,5 +1,5 @@
-module JoinDbClient
-
+module JoindbClientMethods
+    extend ActiveSupport::Concern
     require_relative 'joindb_api'
     require 'io/console'
 

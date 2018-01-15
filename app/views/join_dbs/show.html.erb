@@ -1,0 +1,27 @@
+<h1><%= @join_db.name %></h1>
+<h3>Info</h3>
+<p>
+    <ul>
+        <li>Host: <%= @join_db.host %>
+        <li>Port: <%= @join_db.port %>
+    </ul>
+</p>
+
+<h3>Connections</h3>
+<p>
+    <%= link_to 'Add Connection', remote_dbs_new_path(join_db: @join_db.id) %>
+</p>
+<% @remote_dbs.each do |rdb| %>
+    <p>
+        <em><%= rdb.name %></em>
+        Edit | Delete
+        <ul>
+            <li>DB Type: <%= rdb.db_type %></li>
+            <li>Host: <%= rdb.host %></li>
+            <li>Port: <%= rdb.port %></li>
+            <li>DB Name: <%= rdb.database_name %></li>
+            <li>Schema: <%= rdb.schema %></li>
+            <li>Username: <%= rdb.remote_user %></li>
+        </ul>
+    </p>
+<% end %>

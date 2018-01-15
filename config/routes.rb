@@ -10,14 +10,14 @@ Rails.application.routes.draw do
   get '/logout' => 'sessions#destroy'
 
   # JoinDb routes
-  get '/joindb/:id' => 'join_dbs#show'
-  get '/joindb/new' => 'join_dbs#new'
-  post '/joindb' => 'join_dbs#create'
-  delete '/joindb/:id' => 'join_dbs#destroy'
+  get '/join_dbs/new' => 'join_dbs#new'  
+  get '/join_dbs/:id' => 'join_dbs#show', as: 'join_db'
+  post '/join_dbs' => 'join_dbs#create'
+  get '/join_dbs/:id/delete' => 'join_dbs#destroy', as: 'delete_join_db'
 
   #RemoteDb routes
-  get '/remotedb/:id' => 'remote_dbs#show'
-  get 'remotedb/new' => 'remote_dbs#new'
-  post '/remotedb' => 'remote_dbs#new'
-  delete '/remotedb/:id' => 'remote_dbs#destroy'
+  get 'remote_dbs/new' => 'remote_dbs#new'  
+  get '/remote_dbs/:id' => 'remote_dbs#show'
+  post '/remote_dbs' => 'remote_dbs#create'
+  delete '/remote_dbs/:id' => 'remote_dbs#destroy'
 end
