@@ -13,11 +13,15 @@ Rails.application.routes.draw do
   get '/join_dbs/new' => 'join_dbs#new'  
   get '/join_dbs/:id' => 'join_dbs#show', as: 'join_db'
   post '/join_dbs' => 'join_dbs#create'
+  get '/join_dbs/:id/edit' => 'join_dbs#edit', as: 'edit_join_db'
+  patch '/join_dbs/:id' => 'join_dbs#update'
   get '/join_dbs/:id/delete' => 'join_dbs#destroy', as: 'delete_join_db'
 
   #RemoteDb routes
   get 'remote_dbs/new' => 'remote_dbs#new'  
-  get '/remote_dbs/:id' => 'remote_dbs#show'
+  get '/remote_dbs/:id' => 'remote_dbs#show', as: 'remote_db'
   post '/remote_dbs' => 'remote_dbs#create'
+  get '/remote_dbs/:id/edit' => 'remote_dbs#edit', as: 'edit_remote_db'
+  patch '/remote_dbs/:id' => 'remote_dbs#update'
   get '/remote_dbs/:id/delete' => 'remote_dbs#destroy', as: 'delete_remote_db'
 end

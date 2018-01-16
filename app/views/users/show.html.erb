@@ -4,7 +4,7 @@
     <% @join_dbs.each do |jdb| %>
         <tr>
             <td><%= link_to jdb.name, join_db_path(jdb.id) %></td>
-            <td>Edit</td>
+            <td><%= link_to 'Edit', edit_join_db_path(jdb.id) %></td>
             <td><%= link_to 'Delete', delete_join_db_path(jdb.id), method: :post, data: { confirm: "Are you sure?" } %></td>
         </tr>
     <% end %>

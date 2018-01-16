@@ -1,7 +1,7 @@
 class JoinDbsController < ApplicationController
     include JoindbClientMethods
     before_action :authorize
-    before_action :set_join_db, only: [:show, :update, :destroy]
+    before_action :set_join_db, only: [:show, :update, :edit, :destroy]
 
     # GET /joindb/:id
     def show
@@ -20,6 +20,15 @@ class JoinDbsController < ApplicationController
     def create
         # Creates a new JoinDb
         @join_db = JoinDb.create!(join_db_params.merge(user_id: current_user.id))
+        redirect_to @join_db
+    end
+
+    # UPDATE /join_dbs/:id
+    def edit      
+    end
+
+    def update
+        @join_db.update(join_db_params)
         redirect_to @join_db
     end
 

@@ -1,0 +1,35 @@
+<h1>Edit Connection</h1>
+
+<%= form_for @remote_db do |form| %>
+    <p>
+        <%= form.label(:name, "Nickname") %>
+        <%= form.text_field(:name) %>
+        <br />
+        <%= form.radio_button(:db_type, @POSTGRES) %>
+        <%= form.label(:db_postgres, "PostgreSQL") %>
+        <%= form.radio_button(:db_type, @MYSQL) %>
+        <%= form.label(:db_mysql, "MySQL") %>
+        <br />
+        <%= form.label(:host, "Host Address") %>
+        <%= form.text_field(:host) %>
+        <br />
+        <%= form.label(:port) %>
+        <%= form.text_field(:port) %>
+        <br />
+        <%= form.label(:database_name, "Database Name") %>
+        <%= form.text_field(:database_name) %>
+        <br />
+        <%= form.label(:schema) %>
+        <%= form.text_field(:schema) %>
+        <br />
+        <%= form.label(:remote_user, "Username") %>
+        <%= form.text_field(:remote_user) %>
+        <br />
+        <%= form.label(:password) %>
+        <%= form.password_field(:password) %>
+        <%= form.hidden_field :join_db_id, value: @join_db_id %>
+    </p>
+    <p>
+        <%= form.submit("Edit Connection") %>
+    </p>
+<% end %>
