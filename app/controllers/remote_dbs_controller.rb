@@ -2,13 +2,14 @@ class RemoteDbsController < ApplicationController
     include JoindbClientMethods
     before_action :authorize
     before_action :set_remote_db, only: [:show, :update, :edit, :destroy]    
+    before_action :authorize_owner, only: [:show, :edit, :update, :destroy]
 
     def show
         # Show RemoteDb details
-        @remote_db = RemoteDb.find(params[:id])
     end
 
     def new
+        authorize_owner(params[:join_db])
         # DB type constants
         @POSTGRES = 0
         @MYSQL = 1
@@ -20,6 +21,8 @@ class RemoteDbsController < ApplicationController
 
     def create
         # Creates a new RemoteDb
+        authorize_owner(remote_db_params[:join_db_id])
+
         @remote_db = RemoteDb.create!(remote_db_params.reject{|k, v| k == "password"})
         redirect_to join_db_path(remote_db_params[:join_db_id])
     end

@@ -2,6 +2,7 @@ class JoinDbsController < ApplicationController
     include JoindbClientMethods
     before_action :authorize
     before_action :set_join_db, only: [:show, :update, :edit, :destroy]
+    before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
 
     # GET /joindb/:id
     def show
