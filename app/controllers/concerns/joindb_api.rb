@@ -25,35 +25,26 @@ def add_user(username, password, dbuser = PG_USERNAME, dbpass = PG_PASSWORD)
     end
 end
 
-# If we're connecting to a server on the host, we want to give it the host IP
-def dockerize_localhost(remotehost)
-    if remotehost == "localhost" or remotehost == "127.0.0.1"
-        remotehost = `ifconfig | grep "docker0" -A 1 | grep "inet" | cut -d ":" -f 2 | cut -d " " -f 1`
-    end
-    return remotehost
-end
-
 # Adds a Postgres FDW
-def add_fdw_postgres(fdw_type, username, password, remoteuser, remotepass, remotehost, remotedbname, remoteschema, remoteport=5432)
-    remotehost = dockerize_localhost(remotehost)
-    conn = open_connection(DB_NAME, username, password)    
-    schema_name = "#{remotedbname}_#{remoteschema}"
+def add_fdw_postgres(join_db, remote_db, password)
+    conn = open_connection(join_db)    
+    schema_name = "#{remote_db.database_name}_#{remote_db.schema}"
     begin
         conn.transaction do |conn|
-            conn.send_query("CREATE EXTENSION IF NOT EXISTS #{fdw_type}") 
+            conn.send_query("CREATE EXTENSION IF NOT EXISTS postgres_fdw") 
         end
 
         conn.transaction do |c| 
             c.exec("CREATE SERVER #{schema_name}
-                FOREIGN DATA WRAPPER #{fdw_type}
-                OPTIONS (host '#{remotehost}', dbname '#{remotedbname}', port '#{remoteport}')")
-            c.exec("CREATE USER MAPPING FOR #{username}
+                FOREIGN DATA WRAPPER postgres_fdw
+                OPTIONS (host '#{remote_db.host}', dbname '#{remote_db.database_name}', port '#{remote_db.port || "5432"}')")
+            c.exec("CREATE USER MAPPING FOR #{join_db.username}
                 SERVER #{schema_name}
-                OPTIONS (user '#{remoteuser}', password '#{remotepass}')")
+                OPTIONS (user '#{remote_db.remote_user}', password '#{password}')")
             
             # Import the schema
             c.exec("CREATE SCHEMA #{schema_name}")
-            c.exec("IMPORT FOREIGN SCHEMA #{remoteschema}
+            c.exec("IMPORT FOREIGN SCHEMA #{remote_db.schema}
                 FROM SERVER #{schema_name}
                 INTO #{schema_name}")
         end
@@ -63,23 +54,22 @@ def add_fdw_postgres(fdw_type, username, password, remoteuser, remotepass, remot
 end
 
 # Adds a MySQL FDW
-def add_fdw_mysql(fdw_type, username, password, remoteuser, remotepass, remotehost, remotedbname, remoteport=3306)
-    remotehost = dockerize_localhost(remotehost)
-    conn = open_connection(DB_NAME, username, password)
-    schema_name = "#{remotedbname}"
+def add_fdw_mysql(join_db, remote_db, password)
+    conn = open_connection(join_db)
+    schema_name = "#{remote_db.database_name}"
     begin
         conn.transaction do |conn| 
-            conn.exec("CREATE EXTENSION IF NOT EXISTS #{fdw_type}")
+            conn.exec("CREATE EXTENSION IF NOT EXISTS mysql_fdw")
             conn.get_result
         end
 
         conn.transaction do |conn| 
             conn.exec("CREATE SERVER #{schema_name}
-                FOREIGN DATA WRAPPER #{fdw_type}
-                OPTIONS (host '#{remotehost}', port '#{remoteport}')")
-            conn.exec("CREATE USER MAPPING FOR #{username}
+                FOREIGN DATA WRAPPER mysql_fdw
+                OPTIONS (host '#{remote_db.host}', port '#{remote_db.port || "3306"}')")
+            conn.exec("CREATE USER MAPPING FOR #{join_db.username}
                 SERVER #{schema_name}
-                OPTIONS (username '#{remoteuser}', password '#{remotepass}')")
+                OPTIONS (username '#{remote_db.remote_user}', password '#{password}')")
             # Import the schema
             conn.exec("CREATE SCHEMA #{schema_name}")
             conn.exec("IMPORT FOREIGN SCHEMA #{schema_name}
