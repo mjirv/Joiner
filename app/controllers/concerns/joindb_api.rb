@@ -6,9 +6,9 @@ CONTAINER_NAME = "joiner"
 FILE_DIRECTORY = "/var/lib/postgresql/file_copy"
 
 # Adds the user who will own the database
-def add_user(username, password, dbuser = PG_USERNAME, dbpass = PG_PASSWORD)
-    masterconn = PG::Connection.open(:host => DB_HOST, :dbname => DB_NAME, :user => dbuser,
-      :password => dbpass, :port => get_port())
+def add_user(username, password, join_db, dbuser = PG_USERNAME, dbpass = PG_PASSWORD)
+    masterconn = PG::Connection.open(:host => join_db.host, :dbname => join_db.name, :user => dbuser,
+      :password => dbpass, :port => join_db.port)
     # Only make a superuser if this is the first user being created
     if dbuser == PG_USERNAME
         masterconn.exec("CREATE USER #{username} WITH SUPERUSER")
@@ -17,8 +17,8 @@ def add_user(username, password, dbuser = PG_USERNAME, dbpass = PG_PASSWORD)
     end
     res = masterconn.exec("ALTER USER #{username} WITH password '#{password}'")
     
-    #If successful, delete the docker user login for security
-    if res
+    # If successful, delete the docker user login for security
+    if res and dbuser == PG_USERNAME
         masterconn.exec("ALTER USER #{PG_USERNAME} WITH NOLOGIN")
     else
         puts "User creation unsuccessful."
@@ -26,8 +26,8 @@ def add_user(username, password, dbuser = PG_USERNAME, dbpass = PG_PASSWORD)
 end
 
 # Adds a Postgres FDW
-def add_fdw_postgres(join_db, remote_db, password)
-    conn = open_connection(join_db)    
+def add_fdw_postgres(join_db, remote_db, password, remote_password)
+    conn = open_connection(join_db, password)    
     schema_name = "#{remote_db.database_name}_#{remote_db.schema}"
     begin
         conn.transaction do |conn|
@@ -54,8 +54,8 @@ def add_fdw_postgres(join_db, remote_db, password)
 end
 
 # Adds a MySQL FDW
-def add_fdw_mysql(join_db, remote_db, password)
-    conn = open_connection(join_db)
+def add_fdw_mysql(join_db, remote_db, password, remote_password)
+    conn = open_connection(join_db, password)
     schema_name = "#{remote_db.database_name}"
     begin
         conn.transaction do |conn| 
@@ -79,6 +79,14 @@ def add_fdw_mysql(join_db, remote_db, password)
     rescue StandardError
         $stderr.print "Error: #{$!}"
     end
+end
+
+def edit_fdw(join_db, remote_db_new, remote_db_old)
+    # TODO: fill this in
+end
+
+def delete_fdw(join_db, remote_db, password)
+    # TODO: fill this in
 end
 
 # Adds a CSV
@@ -105,9 +113,9 @@ def add_generic(conn)
 end
 
 # Open the db connection
-def open_connection(db, username, password)
-    return PG::Connection.open(:host => db[:host], :dbname => db[:name], :user => username,
-      :password => password, :port => get_port())
+def open_connection(join_db, password)
+    return PG::Connection.open(:host => join_db.host, :dbname => join_db.name, :user => join_db.username,
+      :password => password, :port => join_db.port)
 end
 
 # Gets the server's port, since with Docker you don't know what port it'll be running on

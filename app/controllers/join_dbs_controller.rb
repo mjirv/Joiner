@@ -20,7 +20,10 @@ class JoinDbsController < ApplicationController
     # POST /joindb
     def create
         # Creates a new JoinDb
-        @join_db = JoinDb.create!(join_db_params.merge(user_id: current_user.id))
+        @join_db = JoinDb.create!(join_db_params.
+            reject{|k, v| [:password, :username].include? k }.
+            merge(user_id: current_user.id))
+        add_user(join_db_params[:username], join_db_params[:password], @join_db)
         redirect_to @join_db
     end
 
@@ -41,7 +44,7 @@ class JoinDbsController < ApplicationController
 
     private
     def join_db_params
-        params.require(:join_db).permit(:name, :user_id)
+        params.require(:join_db).permit(:name, :user_id, :username, :password)
     end
 
     def set_join_db

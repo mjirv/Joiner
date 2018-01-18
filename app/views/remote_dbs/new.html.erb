@@ -2,7 +2,14 @@
 
 <%= form_for @remote_db do |form| %>
     <p>
-        <%= form.label(:name, "Nickname") %>
+        <%= form.label(:username, "Username for \"#{@join_db.name}\"") %>
+        <%= form.text_field(:username, value: @join_db.username) %>
+        <br />
+        <%= form.label(:join_db_password, "Confirm password") %>
+        <%= form.password_field(:join_db_password) %>
+    </p>
+    <p>
+        <%= form.label(:name, "Nickname for new connection") %>
         <%= form.text_field(:name) %>
         <br />
         <%= form.radio_button(:db_type, @POSTGRES) %>

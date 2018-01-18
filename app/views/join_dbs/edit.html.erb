@@ -2,8 +2,10 @@
 
 <%= form_for @join_db do |form| %>
     <p>
-        <%= form.label :name %>
+        <%= form.label :database_name %>
         <%= form.text_field :name %>
+        <%= form.label :username %>
+        <%= form.text_field :username %>
     </p>
     <p>
         <%= form.submit %>
