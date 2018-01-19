@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get '/join_dbs/:id/edit' => 'join_dbs#edit', as: 'edit_join_db'
   patch '/join_dbs/:id' => 'join_dbs#update'
   get '/join_dbs/:id/delete' => 'join_dbs#destroy', as: 'delete_join_db'
+  get '/join_dbs/:id/confirm' => 'join_dbs#confirm_password_view', as: 'confirm_join_db_password'
+  post '/confirm_join_db_password' => 'join_dbs#confirm_password'
 
   #RemoteDb routes
   get 'remote_dbs/new' => 'remote_dbs#new'  

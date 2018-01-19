@@ -86,7 +86,12 @@ def edit_fdw(join_db, remote_db_new, remote_db_old)
 end
 
 def delete_fdw(join_db, remote_db, password)
-    # TODO: fill this in
+    conn = open_connection(join_db, password)
+    
+    # TODO: Change this once we have more than just Postgres and MySQL
+    schema_name = join_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
+
+    conn.exec("DROP FOREIGN SCHEMA #{schema_name}")
 end
 
 # Adds a CSV

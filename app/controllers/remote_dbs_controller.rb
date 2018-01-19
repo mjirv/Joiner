@@ -3,6 +3,7 @@ class RemoteDbsController < ApplicationController
     before_action :authorize
     before_action :set_remote_db, only: [:show, :update, :edit, :destroy]    
     before_action :authorize_owner, only: [:show, :edit, :update, :destroy]
+    before_action :confirm_join_db_password, only: [:edit, :update, :destroy]
 
     def show
         # Show RemoteDb details
@@ -36,7 +37,7 @@ class RemoteDbsController < ApplicationController
                 render :json => {:status => 422}
             end
         else
-            render :json => { :errors => @remote_db.errors.full_messages }, :status => 422
+            handle_error(@remote_db)
         end
     end
 
@@ -54,8 +55,12 @@ class RemoteDbsController < ApplicationController
 
     def destroy
         join_db_id = @remote_db.join_db_id
-        @remote_db.delete
-        redirect_to join_db_path(join_db_id)
+        if delete_fdw(@remote_db.join_db, @remote_db, session[:password])
+            @remote_db.delete
+            redirect_to join_db_path(join_db_id)
+        else
+            handle_error(@remote_db)
+        end
     end
 
     private
@@ -77,6 +82,14 @@ class RemoteDbsController < ApplicationController
         else
             return false
         end
+    end
+
+    def handle_error(remote_db)
+        render :json => { :errors => remote_db.errors.full_messages }, :status => 422        
+    end
+
+    def confirm_join_db_password
+        redirect_to confirm_join_db_password_path(@remote_db.join_db_id) if not (session[:join_db_password] and session[:join_db_id].to_i == @remote_db.join_db_id)
     end
 end
 
