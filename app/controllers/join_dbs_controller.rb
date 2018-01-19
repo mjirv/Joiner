@@ -3,6 +3,7 @@ class JoinDbsController < ApplicationController
     before_action :authorize
     before_action :set_join_db, only: [:show, :update, :edit, :destroy, :confirm_password_view]
     before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
+    before_action :confirm_join_db_password, only: [:update, :edit]
 
     # GET /joindb/:id
     def show
@@ -70,6 +71,10 @@ class JoinDbsController < ApplicationController
 
     def set_join_db
         @join_db = JoinDb.find(params[:id])
+    end
+
+    def confirm_join_db_password
+        redirect_to confirm_join_db_password_path(@remote_db.join_db_id) if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
     end
 end
 

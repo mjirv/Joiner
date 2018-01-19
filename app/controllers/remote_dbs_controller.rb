@@ -16,7 +16,9 @@ class RemoteDbsController < ApplicationController
         @MYSQL = "mysql"
 
         # Form for getting info to create the new RemoteDb
-        @join_db_id = params[:join_db]
+        @join_db_id = params[:join_db].to_i
+        confirm_join_db_password(@join_db_id)
+
         @join_db = JoinDb.find(@join_db_id)
         @remote_db = RemoteDb.new
     end
@@ -24,17 +26,18 @@ class RemoteDbsController < ApplicationController
     def create
         params[:db_type] = params[:db_type].to_i
         # Creates a new RemoteDb
-        authorize_owner(remote_db_params[:join_db_id])
+        authorize_owner(remote_db_params[:join_db_id].to_i)
+        confirm_join_db_password(remote_db_params[:join_db_id].to_i)
 
         @remote_db = RemoteDb.create(remote_db_params.reject{|k, v| k.include? "password" or k == "username" })
 
         # Make sure we can actually create the FDW downstream       
         if @remote_db.save
-            if create_remote_db(@remote_db, remote_db_params[:password], remote_db_params[:join_db_password]) 
+            if create_remote_db(@remote_db, remote_db_params[:password], session[:join_db_password]) 
                 redirect_to join_db_path(remote_db_params[:join_db_id]) and return
             else
                 @remote_db.delete
-                render :json => {:status => 422}
+                render :json => {:status => 422} and return
             end
         else
             handle_error(@remote_db)
@@ -55,7 +58,7 @@ class RemoteDbsController < ApplicationController
 
     def destroy
         join_db_id = @remote_db.join_db_id
-        if delete_fdw(@remote_db.join_db, @remote_db, session[:password])
+        if delete_fdw(@remote_db.join_db, @remote_db, session[:join_db_password])
             @remote_db.delete
             redirect_to join_db_path(join_db_id)
         else
@@ -88,8 +91,10 @@ class RemoteDbsController < ApplicationController
         render :json => { :errors => remote_db.errors.full_messages }, :status => 422        
     end
 
-    def confirm_join_db_password
-        redirect_to confirm_join_db_password_path(@remote_db.join_db_id) if not (session[:join_db_password] and session[:join_db_id].to_i == @remote_db.join_db_id)
+    def confirm_join_db_password(join_db_id = nil)
+        join_db_id ||= @remote_db.join_db_id
+
+        redirect_to confirm_join_db_password_path(join_db_id) and return if not (session[:join_db_password] and session[:join_db_id].to_i == join_db_id)
     end
 end
 
