@@ -27,9 +27,20 @@ class JoinDbsController < ApplicationController
     # POST /joindb
     def create
         # Creates a new JoinDb
-        @join_db = JoinDb.create!(join_db_params.
-            reject{|k, v| [:password, :username].include? k }.
+        @join_db = JoinDb.create(join_db_params.
+            reject{|k, v| k == 'password' }.
             merge(user_id: current_user.id))
+        if @join_db.save
+            begin
+                create_join_db(join_db_params[:username], join_db_params[:password], @join_db)
+            rescue Exception => e
+                @join_db.delete
+                raise e
+            end
+        else
+            render json: {status: 422} and return
+        end
+
         add_user(join_db_params[:username], join_db_params[:password], @join_db)
         redirect_to @join_db
     end
@@ -74,7 +85,7 @@ class JoinDbsController < ApplicationController
     end
 
     def confirm_join_db_password
-        redirect_to confirm_join_db_password_path(@remote_db.join_db_id) if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
+        redirect_to confirm_join_db_password_path(@join_db.id) if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
     end
 end
 

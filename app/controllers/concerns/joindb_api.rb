@@ -5,6 +5,22 @@ DB_HOST = "localhost"
 CONTAINER_NAME = "joiner"
 FILE_DIRECTORY = "/var/lib/postgresql/file_copy"
 
+# Creates a new JoinDB and returns relevant information about it
+def create_join_db(username, password, join_db)
+    # Call AWS API to create a new instance, get back the hostname
+    connection_info = create_cloud_db(join_db.name)
+
+    # Return the host and port
+    return connection_info
+
+end
+
+# Destroys a JoinDB
+def destroy_join_db(join_db)
+    # Calls AWS API to destroy the db
+    destroy_cloud_db(join_db.host)
+end
+
 # Adds the user who will own the database
 def add_user(username, password, join_db, dbuser = PG_USERNAME, dbpass = PG_PASSWORD)
     masterconn = PG::Connection.open(:host => join_db.host, :dbname => join_db.name, :user => dbuser,
@@ -82,7 +98,7 @@ def add_fdw_mysql(join_db, remote_db, password, remote_password)
 end
 
 def edit_fdw(join_db, remote_db_new, remote_db_old)
-    # TODO: fill this in
+    # TODO: fill this in after MVP
 end
 
 def delete_fdw(join_db, remote_db, password)
