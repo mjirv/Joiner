@@ -51,7 +51,7 @@ def add_user(username, password, join_db, dbuser = PG_USERNAME, dbpass = PG_PASS
 end
 
 # Adds a Postgres FDW
-def add_fdw_postgres(join_db, remote_db, password, remote_password)
+def add_fdw_postgres(join_db, remote_db, remote_password, password)
     conn = open_connection(join_db, password)    
     schema_name = "#{remote_db.database_name}_#{remote_db.schema}"
     begin
@@ -65,7 +65,7 @@ def add_fdw_postgres(join_db, remote_db, password, remote_password)
                 OPTIONS (host '#{remote_db.host}', dbname '#{remote_db.database_name}', port '#{remote_db.port || "5432"}')")
             c.exec("CREATE USER MAPPING FOR #{join_db.username}
                 SERVER #{schema_name}
-                OPTIONS (user '#{remote_db.remote_user}', password '#{password}')")
+                OPTIONS (user '#{remote_db.remote_user}', password '#{remote_password}')")
             
             # Import the schema
             c.exec("CREATE SCHEMA #{schema_name}")
@@ -79,7 +79,7 @@ def add_fdw_postgres(join_db, remote_db, password, remote_password)
 end
 
 # Adds a MySQL FDW
-def add_fdw_mysql(join_db, remote_db, password, remote_password)
+def add_fdw_mysql(join_db, remote_db, remote_password, password)
     conn = open_connection(join_db, password)
     schema_name = "#{remote_db.database_name}"
     begin
@@ -94,10 +94,10 @@ def add_fdw_mysql(join_db, remote_db, password, remote_password)
                 OPTIONS (host '#{remote_db.host}', port '#{remote_db.port || "3306"}')")
             conn.exec("CREATE USER MAPPING FOR #{join_db.username}
                 SERVER #{schema_name}
-                OPTIONS (username '#{remote_db.remote_user}', password '#{password}')")
+                OPTIONS (username '#{remote_db.remote_user}', password '#{remote_password}')")
             # Import the schema
             conn.exec("CREATE SCHEMA #{schema_name}")
-            conn.exec("IMPORT FOREIGN SCHEMA #{schema_name}
+            conn.exec("IMPORT FOREIGN SCHEMA \"#{schema_name}\"
                 FROM SERVER #{schema_name}
                 INTO #{schema_name}")
         end
@@ -110,13 +110,26 @@ def edit_fdw(join_db, remote_db_new, remote_db_old)
     # TODO: fill this in after MVP
 end
 
+def refresh_fdw(join_db, remote_db, password)
+    conn = open_connection(join_db, password)
+    schema_name = remote_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
+    remote_schema = remote_db.postgres? ? "#{remote_db.schema}" : "#{remote_db.database_name}"
+
+    conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
+    conn.exec("CREATE SCHEMA #{schema_name}")
+    conn.exec("IMPORT FOREIGN SCHEMA \"#{remote_schema}\"
+        FROM SERVER #{schema_name}
+        INTO #{schema_name}")
+end
+
 def delete_fdw(join_db, remote_db, password)
     conn = open_connection(join_db, password)
     
     # TODO: Change this once we have more than just Postgres and MySQL
-    schema_name = join_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
+    schema_name = remote_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
 
-    conn.exec("DROP FOREIGN SCHEMA #{schema_name}")
+    conn.exec("DROP SERVER IF EXISTS #{schema_name} CASCADE")
+    conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
 end
 
 # Adds a CSV
@@ -144,8 +157,7 @@ end
 
 # Open the db connection
 def open_connection(join_db, password)
-    return PG::Connection.open(:host => join_db.host, :dbname => DB_NAME, :user => join_db.username,
-      :password => password, :port => join_db.port)
+    return PG::Connection.open(:host => join_db.host, :dbname => DB_NAME, :user => join_db.username, :password => password, :port => join_db.port)
 end
 
 # Gets the server's port, since with Docker you don't know what port it'll be running on

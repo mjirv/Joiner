@@ -26,4 +26,5 @@ Rails.application.routes.draw do
   get '/remote_dbs/:id/edit' => 'remote_dbs#edit', as: 'edit_remote_db'
   patch '/remote_dbs/:id' => 'remote_dbs#update'
   get '/remote_dbs/:id/delete' => 'remote_dbs#destroy', as: 'delete_remote_db'
+  post '/refresh_remote_db/:id' => 'remote_dbs#refresh', as: 'refresh_remote_db'
 end

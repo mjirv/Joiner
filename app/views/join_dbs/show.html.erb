@@ -16,7 +16,7 @@
 <% @remote_dbs.each do |rdb| %>
     <p>
         <b><%= rdb.name %></b>
-        <!-- <%= link_to 'Edit', edit_remote_db_path(rdb.id) %> | --><%= link_to 'Delete', delete_remote_db_path(rdb.id) %>
+        <!-- <%= link_to 'Edit', edit_remote_db_path(rdb.id) %> | --><%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post %> | <%= link_to 'Delete', delete_remote_db_path(rdb.id) %>
         <ul>
             <li>DB Type: <%= rdb.db_type %></li>
             <li>Host: <%= rdb.host %></li>

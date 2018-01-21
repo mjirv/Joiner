@@ -29,7 +29,7 @@ class RemoteDbsController < ApplicationController
         authorize_owner(remote_db_params[:join_db_id].to_i)
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
 
-        @remote_db = RemoteDb.create(remote_db_params.reject{|k, v| k.include? "password" or k == "username" })
+        @remote_db = RemoteDb.create(remote_db_params.reject{|k, v| k.include? "password" })
 
         # Make sure we can actually create the FDW downstream       
         if @remote_db.save
@@ -44,16 +44,32 @@ class RemoteDbsController < ApplicationController
         end
     end
 
-    # UPDATE /remote_dbs/:id
+    # The edit UI for a RemoteDb
     def edit
         @join_db_id = @remote_db.join_db_id
         @join_db = JoinDb.find(@join_db_id)
     end
     
+    # The PUT method to actually edit it
     def update
         join_db_id = @remote_db.join_db_id
-        @remote_db.update!(remote_db_params.reject{|k, v| k.include? "password" or k == "username"})
+        @remote_db.update!(remote_db_params.reject{|k, v| k.include? "password" })
         redirect_to join_db_path(join_db_id)
+    end
+
+    # Refreshes the mapping
+    def refresh
+        # Get the needed RemoteDb
+        remote_db = RemoteDb.find(params[:id])
+    
+        # Confirm the user can edit/get their password
+        confirm_join_db_password(remote_db.join_db_id)
+        
+        # Get the needed JoinDb it belongs to
+        join_db = JoinDb.find(remote_db.join_db_id)
+        
+        # Refresh the mapping via joindb_api.rb
+        refresh_fdw(join_db, remote_db, session[:join_db_password])
     end
 
     def destroy
@@ -68,7 +84,7 @@ class RemoteDbsController < ApplicationController
 
     private
     def remote_db_params
-        params.require(:remote_db).permit(:name, :username, :join_db_password, :db_type, :host, :port, :database_name, :schema, :remote_user, :password, :join_db_id)
+        params.require(:remote_db).permit(:name, :db_type, :host, :port, :database_name, :schema, :remote_user, :password, :join_db_id)
     end
 
     def set_remote_db
