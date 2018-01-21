@@ -32,7 +32,14 @@ class JoinDbsController < ApplicationController
             merge(user_id: current_user.id))
         if @join_db.save
             begin
-                create_join_db(join_db_params[:username], join_db_params[:password], @join_db)
+                # Create the JoinDb
+                connection_info = create_join_db(join_db_params[:username], join_db_params[:password], @join_db)
+                @join_db.host = connection_info[:host]
+                @join_db.port = connection_info[:port]
+                @join_db.save
+
+                # Add the user to it
+                add_user(join_db_params[:username], join_db_params[:password], @join_db)
             rescue Exception => e
                 @join_db.delete
                 raise e
@@ -41,7 +48,6 @@ class JoinDbsController < ApplicationController
             render json: {status: 422} and return
         end
 
-        add_user(join_db_params[:username], join_db_params[:password], @join_db)
         redirect_to @join_db
     end
 

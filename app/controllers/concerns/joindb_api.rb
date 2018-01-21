@@ -5,6 +5,15 @@ DB_HOST = "localhost"
 CONTAINER_NAME = "joiner"
 FILE_DIRECTORY = "/var/lib/postgresql/file_copy"
 
+# Creates a new EC2 instance with a JoinDB and returns relevant info
+def create_cloud_db(name)
+    # TODO: change this to actually make a new one
+    return {
+        host: "ec2-18-220-49-14.us-east-2.compute.amazonaws.com",
+        port: 5432
+    }
+end
+
 # Creates a new JoinDB and returns relevant information about it
 def create_join_db(username, password, join_db)
     # Call AWS API to create a new instance, get back the hostname
@@ -23,7 +32,7 @@ end
 
 # Adds the user who will own the database
 def add_user(username, password, join_db, dbuser = PG_USERNAME, dbpass = PG_PASSWORD)
-    masterconn = PG::Connection.open(:host => join_db.host, :dbname => join_db.name, :user => dbuser,
+    masterconn = PG::Connection.open(:host => join_db.host, :dbname => DB_NAME, :user => dbuser,
       :password => dbpass, :port => join_db.port)
     # Only make a superuser if this is the first user being created
     if dbuser == PG_USERNAME
@@ -135,7 +144,7 @@ end
 
 # Open the db connection
 def open_connection(join_db, password)
-    return PG::Connection.open(:host => join_db.host, :dbname => join_db.name, :user => join_db.username,
+    return PG::Connection.open(:host => join_db.host, :dbname => DB_NAME, :user => join_db.username,
       :password => password, :port => join_db.port)
 end
 
