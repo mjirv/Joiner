@@ -1,10 +1,9 @@
-DB_NAME = "joiner"
 PG_USERNAME = "docker"
 PG_PASSWORD = "docker"
-DB_HOST = "localhost"
 CONTAINER_NAME = "joiner"
 FILE_DIRECTORY = "/var/lib/postgresql/file_copy"
 
+# TODO: Break these three out
 # Creates a new EC2 instance with a JoinDB and returns relevant info
 def create_cloud_db(name)
     # TODO: change this to actually make a new one
@@ -110,6 +109,7 @@ def edit_fdw(join_db, remote_db_new, remote_db_old)
     # TODO: fill this in after MVP
 end
 
+# TODO: Break this out or add to JoinDB because it's new
 def refresh_fdw(join_db, remote_db, password)
     conn = open_connection(join_db, password)
     schema_name = remote_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
@@ -122,6 +122,7 @@ def refresh_fdw(join_db, remote_db, password)
         INTO #{schema_name}")
 end
 
+# TODO: Break this out or add to JoinDB because it's new
 def delete_fdw(join_db, remote_db, password)
     conn = open_connection(join_db, password)
     
