@@ -13,7 +13,7 @@ class RemoteDbsController < ApplicationController
         # DB type constants
         @POSTGRES = "postgres"
         @MYSQL = "mysql"
-        @SQLSERVER = "sqlserver"
+        @SQLSERVER = "sql_server"
 
         # Form for getting info to create the new RemoteDb
         @join_db_id = params[:join_db].to_i
