@@ -5,11 +5,6 @@
         <%= form.label(:name, "Nickname") %>
         <%= form.text_field(:name) %>
         <br />
-        <%= form.radio_button(:db_type, @POSTGRES) %>
-        <%= form.label(:db_postgres, "PostgreSQL") %>
-        <%= form.radio_button(:db_type, @MYSQL) %>
-        <%= form.label(:db_mysql, "MySQL") %>
-        <br />
         <%= form.label(:host, "Host Address") %>
         <%= form.text_field(:host) %>
         <br />

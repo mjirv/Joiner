@@ -9,6 +9,8 @@
         <%= form.label(:db_postgres, "PostgreSQL") %>
         <%= form.radio_button(:db_type, @MYSQL) %>
         <%= form.label(:db_mysql, "MySQL") %>
+        <%= form.radio_button(:db_type, @SQLSERVER) %>
+        <%= form.label(:db_sqlserver, "SQL Server") %>
         <br />
         <%= form.label(:host, "Host Address") %>
         <%= form.text_field(:host) %>

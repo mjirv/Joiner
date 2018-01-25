@@ -14,6 +14,7 @@ class RemoteDbsController < ApplicationController
         # DB type constants
         @POSTGRES = "postgres"
         @MYSQL = "mysql"
+        @SQLSERVER = "sqlserver"
 
         # Form for getting info to create the new RemoteDb
         @join_db_id = params[:join_db].to_i
@@ -98,6 +99,8 @@ class RemoteDbsController < ApplicationController
             add_fdw_postgres(join_db, remote_db, remote_password, password)
         elsif remote_db.mysql?
             add_fdw_mysql(join_db, remote_db, remote_password, password)
+        elsif remote_db.sql_server?
+            add_fdw_sql_se
         else
             return false
         end
