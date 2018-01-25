@@ -14,7 +14,7 @@ module JoindbApi
     def create_cloud_db(name)
         # TODO: change this to actually make a new one
         return {
-            host: "ec2-18-220-49-14.us-east-2.compute.amazonaws.com",
+            host: "ec2-18-217-102-177.us-east-2.compute.amazonaws.com",
             port: 5432
         }
     end
@@ -67,19 +67,19 @@ module JoindbApi
     # methods in joindb_api_methods.rb
 
     def open_connection(join_db, password)
-        JoinDBApiMethods.open_connection(DB_NAME, join_db.host, join_db.username, password)
+        JoinDBApiMethods.open_connection(DB_NAME, join_db.host, join_db.username, password, join_db.port)
     end
 
     def add_user(username, password, join_db)
-        JoinDBApiMethods.add_user(username: username, pasword: password, db_host: join_db.host, db_name: DB_NAME)
+        JoinDBApiMethods.add_user(username: username, password: password, db_host: join_db.host, db_name: DB_NAME, port: join_db.port)
     end
 
     def add_fdw_postgres(join_db, remote_db, remote_password, password)
-        JoinDBApiMethods.add_fdw_postgres(username: join_db.username, password: password, db_name: DB_NAME, remote_user: remote_db.remote_user, remote_pass: remote_password, remote_host: remote_db.host, remote_db_name: remote_db.database_name, remote_schema: remote_db.schema, remote_port: remote_db.port)
+        JoinDBApiMethods.add_fdw_postgres(username: join_db.username, password: password, db_name: DB_NAME, db_host: join_db.host, port: join_db.port, remote_user: remote_db.remote_user, remote_pass: remote_password, remote_host: remote_db.host, remote_db_name: remote_db.database_name, remote_schema: remote_db.schema, remote_port: remote_db.port)
     end
 
     def add_fdw_mysql(join_db, remote_db, remote_password, password)
-        JoinDBApiMethods.add_fdw_other(username: join_db.username, password: password, db_name: DB_NAME, remote_user: remote_db.remote_user, remote_pass: remote_password, remote_host: remote_db.host, remote_db_name: remote_db.database_name, remote_port: remote_db.port, driver_type: "MySQL")
+        JoinDBApiMethods.add_fdw_other(username: join_db.username, password: password, db_name: DB_NAME, db_host: join_db.host, port: join_db.port, remote_user: remote_db.remote_user, remote_pass: remote_password, remote_host: remote_db.host, remote_db_name: remote_db.database_name, remote_port: remote_db.port, driver_type: "MySQL")
     end
 
 end

@@ -12,12 +12,11 @@ module JoindbApiMethods
 
     # Adds the user who will own the database
     def add_user(username:, password:, db_host:, db_name:, db_user: PG_USERNAME,
-        db_pass: PG_PASSWORD)
-        masterconn = PG::Connection.open(:host => db_host, :dbname => db_name,
-            :user => db_user, :password => db_pass, :port => get_port())
+        db_pass: PG_PASSWORD, port:)
+        masterconn = open_connection(db_name, db_host, db_user, db_pass, port)
         
         # Only make a superuser if this is the first user being created
-        if dbuser == PG_USERNAME
+        if db_user == PG_USERNAME
             masterconn.exec("CREATE USER #{username} WITH SUPERUSER")
         else
             masterconn.exec("CREATE USER #{username}")
@@ -26,7 +25,7 @@ module JoindbApiMethods
             '#{password}'")
         
         #If successful, delete the docker user login for security
-        if res and dbuser == PG_USERNAME
+        if res and db_user == PG_USERNAME
             masterconn.exec("ALTER USER #{PG_USERNAME} WITH NOLOGIN")
         else
             puts "User creation unsuccessful."
@@ -44,11 +43,11 @@ module JoindbApiMethods
     end
 
     # Adds a Postgres FDW
-    def add_fdw_postgres(username:, password:, db_name:, remote_user: '',
-        remote_pass: '', remote_host:, remote_db_name: 'postgres',
-        remote_schema: 'public', remote_port: 5432)
+    def add_fdw_postgres(username:, password:, db_name:, db_host:, port:,
+        remote_user: '', remote_pass: '', remote_host:,
+        remote_db_name: 'postgres', remote_schema: 'public', remote_port: 5432)
         remotehost = dockerize_localhost(remote_host)
-        conn = open_connection(db_name, username, password)    
+        conn = open_connection(db_name, db_host, username, password, port)    
         schema_name = "#{remote_db_name}_#{remote_schema}"
         begin
             conn.transaction do |c| 
@@ -85,11 +84,11 @@ module JoindbApiMethods
 
     # Adds a MySQL FDW or a SQL Server FDW depending on whether drivertype is
     # "MySQL" or "SQL Server"
-    def add_fdw_other(username:, password:, db_name:, db_host:, remote_user: '',
-            remote_pass: '', remote_host:, remote_db_name:, remote_port: 3306,
-            driver_type:)
+    def add_fdw_other(username:, password:, db_name:, db_host:, port:,
+            remote_user: '', remote_pass: '', remote_host:, remote_db_name:, 
+            remote_port: 3306, driver_type:)
         remotehost = dockerize_localhost(remote_host)
-        conn = open_connection(db_name, db_host, username, password)
+        conn = open_connection(db_name, db_host, username, password, port)
         schema_name = "#{remote_db_name}"
         begin
             conn.transaction do |conn| 
@@ -125,8 +124,7 @@ module JoindbApiMethods
     end
 
     # Adds a CSV
-    def add_csv(files:, username:, password:, db_name:)
-        port = get_port()
+    def add_csv(files:, username:, password:, db_name:, port:)
         files.each do |file|
             file = file.gsub("\n","")
             puts ""
@@ -142,9 +140,9 @@ module JoindbApiMethods
     end
 
     # Open the db connection
-    def open_connection(db_name, db_host, username, password)
+    def open_connection(db_name, db_host, username, password, port)
         return PG::Connection.open(:host => db_host, :dbname => db_name,
-        :user => username, :password => password, :port => get_port())
+        :user => username, :password => password, :port => port)
     end
 
     # Gets the server's port, since with Docker you don't know what port it'll
@@ -154,24 +152,24 @@ module JoindbApiMethods
             to_i
     end
 
-    def get_schemas(username, password, db_name, db_host)
-        conn = open_connection(db_name, db_host, username, password)
+    def get_schemas(username, password, db_name, db_host, port)
+        conn = open_connection(db_name, db_host, username, password, port)
 
         # Show the schemas
         conn.send_query("SELECT schema_name FROM information_schema.schemata")
         conn.get_result
     end
 
-    def get_foreign_servers(username, password, db_name, db_host)
-        conn = open_connection(db_name, db_host, username, password)
+    def get_foreign_servers(username, password, db_name, db_host, port)
+        conn = open_connection(db_name, db_host, username, password, port)
 
         # Show the servers
         conn.send_query("SELECT srvname, srvoptions FROM pg_foreign_server")
         conn.get_result
     end
 
-    def get_local_tables(username, password, db_name, db_host)
-        conn = open_connection(db_name, db_host, username, password)
+    def get_local_tables(username, password, db_name, db_host, port)
+        conn = open_connection(db_name, db_host, username, password, port)
 
         # Show the tables
         conn.send_query("SELECT schemaname, tablename FROM pg_tables WHERE 
@@ -180,8 +178,8 @@ module JoindbApiMethods
         conn.get_result
     end
 
-    def get_foreign_tables(username, password, db_name, db_host)
-        conn = open_connection(db_name, db_host, username, password)
+    def get_foreign_tables(username, password, db_name, db_host, port)
+        conn = open_connection(db_name, db_host, username, password, port)
 
         # Show the tables
         conn.send_query("SELECT ftoptions FROM pg_foreign_table")
