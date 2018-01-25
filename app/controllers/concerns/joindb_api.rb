@@ -1,4 +1,4 @@
-module JoinDbClientApi
+module JoindbApi
     require_relative './joindb_api_methods'
     PG_USERNAME = "docker"
     PG_PASSWORD = "docker"
@@ -53,7 +53,6 @@ module JoinDbClientApi
             INTO #{schema_name}")
     end
 
-    # TODO: Break this out or add to JoinDB because it's new
     def delete_fdw(join_db, remote_db, password)
         conn = open_connection(join_db, password)
         
