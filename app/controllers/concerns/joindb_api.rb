@@ -42,7 +42,7 @@ module JoindbApi
     # Drops and re-adds the foreign server/schema to refresh tables
     # TODO: There's gotta be a better way of doing this
     def refresh_fdw(join_db, remote_db, password)
-        conn = open_connection(join_db., password)
+        conn = open_connection(join_db, password)
         schema_name = remote_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
         remote_schema = remote_db.postgres? ? "#{remote_db.schema}" : "#{remote_db.database_name}"
 
