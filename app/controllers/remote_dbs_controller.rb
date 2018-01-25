@@ -1,5 +1,4 @@
 class RemoteDbsController < ApplicationController
-    include JoindbClientMethods
     before_action :authorize
     before_action :set_remote_db, only: [:show, :update, :edit, :destroy]    
     before_action :authorize_owner, only: [:show, :edit, :update, :destroy]
