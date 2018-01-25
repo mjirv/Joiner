@@ -99,7 +99,7 @@ class RemoteDbsController < ApplicationController
         elsif remote_db.mysql?
             add_fdw_mysql(join_db, remote_db, remote_password, password)
         elsif remote_db.sql_server?
-            add_fdw_sql_se
+            add_fdw_sql_server(join_db, remote_db, remote_password, password)
         else
             return false
         end
