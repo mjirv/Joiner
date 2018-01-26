@@ -26,3 +26,8 @@ describe "Creating a JoinDb", type: :request do
     it "is given a host and port on creation" do
     end
 end
+
+describe "Deleting a JoinDb", type: :request do
+    it "deletes the JoinDB" do
+    end
+end
