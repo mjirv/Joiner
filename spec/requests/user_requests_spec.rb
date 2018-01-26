@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+# TODO: We shouldn't need this, but it can't find user otherwise
 FactoryBot.find_definitions
 
 describe "Public access to User Dashboard", type: :request do

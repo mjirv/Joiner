@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-FactoryBot.find_definitions
+#FactoryBot.find_definitions
 
 describe "Viewing a RemoteDb", type: :request do
     it "denies access if you're not logged in" do
