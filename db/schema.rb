@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20180118060923) do
     t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "username"
+    t.string   "username", null: false
     t.index ["user_id"], name: "index_join_dbs_on_user_id"
   end
 
