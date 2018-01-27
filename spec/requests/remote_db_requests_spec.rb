@@ -26,3 +26,14 @@ describe "Creating a RemoteDb", type: :request do
     it "is given a host and port on creation" do
     end
 end
+
+describe "Deleting a RemoteDb", type: :request do
+    it "deletes the JoinDB if you're logged in and the right user" do
+    end
+
+    it "fails if you're not logged in" do
+    end
+
+    it "fails if you're the wrong user" do
+    end
+end

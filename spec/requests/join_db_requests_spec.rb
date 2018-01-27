@@ -28,6 +28,12 @@ describe "Creating a JoinDb", type: :request do
 end
 
 describe "Deleting a JoinDb", type: :request do
-    it "deletes the JoinDB" do
+    it "deletes the JoinDB if you're the right user" do
+    end
+
+    it "fails if you're not logged in" do
+    end
+
+    it "fails if you're the wrong user" do
     end
 end

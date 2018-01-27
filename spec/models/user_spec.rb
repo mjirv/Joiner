@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   subject { User.new(name: "mjirv", email: "mjirv@example.com", password: "test123") }
-  it { should have_many(:join_dbs) }
+  it { should have_many(:join_dbs).dependent(:destroy) }
   # It should enforce valid email format
   it { should allow_value("michael.j.irvine@gmail.com").for(:email)}
   it { should_not allow_value("foo").for(:email) }
