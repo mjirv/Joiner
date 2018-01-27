@@ -16,6 +16,10 @@ describe "Public access to User Dashboard", type: :request do
         expect(response).to redirect_to "/"
     end
 
+    it "successfully loads the login page" do
+        get "/login"
+        expect(response).to have_http_status(200)
+    end
 end
 
 describe "Logging in", type: :request do
@@ -55,13 +59,9 @@ describe "Signing up", type: :request do
         post "/users", params: {user: user_attributes}
         expect(response).to redirect_to "/signup"
     end
-end
 
-describe "Deleting a user", type: :request do
-    it "deletes the user's JoinDb" do
-        # TODO: This should probably be under the model
-    end
-
-    it "deletes the user's JoinDB" do
+    it "successfully loads the signup page" do
+        get "/signup"
+        expect(response).to have_http_status(200)
     end
 end
