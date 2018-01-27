@@ -32,13 +32,8 @@ class JoinDbsController < ApplicationController
         if @join_db.save
             begin
                 # Create the JoinDb
-                connection_info = create_join_db(join_db_params[:username], join_db_params[:password], @join_db)
-                @join_db.host = connection_info[:host]
-                @join_db.port = connection_info[:port]
-                @join_db.save
-
-                # Add the user to it
-                add_user(join_db_params[:username], join_db_params[:password], @join_db)
+                @join_db.create_and_attach_cloud_db(join_db_params[:username],
+                    join_db_params[:password])
             rescue Exception => e
                 @join_db.delete
                 raise e
@@ -70,8 +65,7 @@ class JoinDbsController < ApplicationController
 
     def confirm_password
         @join_db = JoinDb.find(params[:join_db_id])
-        if true #open_connection(@join_db, params[:password])
-            # TODO: change this when not testing
+        if open_connection(@join_db, params[:password])
             session[:join_db_id] = @join_db.id
             session[:join_db_password] = params[:password]
             redirect_to @join_db
