@@ -1,17 +1,28 @@
-ecs_client = Aws::ECS::Client.new()
-ec2_client = Aws::EC2::Client.new()
+@ecs_client = Aws::ECS::Client.new()
+@ec2_client = Aws::EC2::Client.new()
+@CLUSTER_NAME = "default"
 
 def create_join_db()
-    available_subnets = ec2_client.describe_subnets.subnets.map(&:subnet_id)
+    arn = run_new_join_db_task
+    dns_name = get_join_db_public_dns_name(arn)
+    return {
+        task_arn: arn,
+        dns_name: dns_name
+    }
+end
 
-    resp = ecs_client.run_task({
-        cluster: "default",
+def run_new_join_db_task()
+    available_subnets = @ec2_client.describe_subnets.subnets.map(&:subnet_id)
+
+    resp = @ecs_client.run_task({
+        cluster: @CLUSTER_NAME,
         task_definition: "joiner-service:1",
         launch_type: "FARGATE",
         network_configuration: {
             awsvpc_configuration: {
                 subnets: available_subnets,
-                security_groups: ["sg-da2fd4ad"]
+                security_groups: ["sg-da2fd4ad"],
+                assign_public_ip: "ENABLED"
             }
         }
     })
@@ -21,18 +32,18 @@ def create_join_db()
 end
 
 def get_network_interface_id(ecs_task_arn)
-    task_desc = ecs_client.describe_tasks({
+    task_desc = @ecs_client.describe_tasks({
         tasks: [ecs_task_arn]
     })
 
     network_interface_id = task_desc.tasks[0].attachments[0].details.
-        select{|detail| details.name == "networkInterfaceId"}[0].value
+        select{|detail| detail.name == "networkInterfaceId"}[0].value
     
     return network_interface_id
 end
 
 def get_network_interface_public_dns_name(network_interface_id)
-    dns_name = ec2_client.describe_network_interfaces({
+    dns_name = @ec2_client.describe_network_interfaces({
         network_interface_ids: [network_interface_id]
     }).network_interfaces[0].association.public_dns_name
 
@@ -44,4 +55,11 @@ def get_join_db_public_dns_name(ecs_task_arn)
     dns_name = get_network_interface_public_dns_name(network_interface_id)
 
     return dns_name
+end
+
+def stop_join_db(task_arn)
+    @ecs_client.stop_task({
+        cluster: @CLUSTER_NAME,
+        task: task_arn
+    })
 end
