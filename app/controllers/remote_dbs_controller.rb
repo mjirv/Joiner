@@ -2,14 +2,23 @@ class RemoteDbsController < ApplicationController
     before_action :authorize
     before_action :set_remote_db, only: [:show, :update, :edit, :destroy]    
     before_action :authorize_owner, only: [:show, :edit, :update, :destroy]
+    before_action only: [:new] do
+        authorize_owner(params[:join_db])
+    end
+    before_action only: [:create] do
+        authorize_owner(remote_db_params[:join_db_id].to_i)
+    end
     before_action :confirm_join_db_password, only: [:edit, :update, :destroy]
+    before_action only: [:create] do
+        confirm_join_db_password(remote_db_params[:join_db_id].to_i)
+    end
 
     def show
         # Show RemoteDb details
     end
 
     def new
-        authorize_owner(params[:join_db])
+        #authorize_owner(params[:join_db])
         # DB type constants
         @POSTGRES = "postgres"
         @MYSQL = "mysql"
@@ -26,7 +35,6 @@ class RemoteDbsController < ApplicationController
     def create
         params[:db_type] = params[:db_type].to_i
         # Creates a new RemoteDb
-        authorize_owner(remote_db_params[:join_db_id].to_i)
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
 
         @remote_db = RemoteDb.create(remote_db_params.reject{|k, v| k.include? "password" })

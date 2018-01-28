@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   post '/confirm_join_db_password' => 'join_dbs#confirm_password'
 
   #RemoteDb routes
-  get 'remote_dbs/new' => 'remote_dbs#new'  
+  get 'remote_dbs/new' => 'remote_dbs#new'
   get '/remote_dbs/:id' => 'remote_dbs#show', as: 'remote_db'
   post '/remote_dbs' => 'remote_dbs#create'
   get '/remote_dbs/:id/edit' => 'remote_dbs#edit', as: 'edit_remote_db'

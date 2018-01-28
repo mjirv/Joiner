@@ -8,11 +8,16 @@ class ApplicationController < ActionController::Base
     helper_method :current_user
     
     def authorize
-        redirect_to '/signup' unless current_user
+        redirect_to '/signup' and return unless current_user
     end
 
     def authorize_owner(join_db_id=nil)
         join_db_id ||= @remote_db.join_db_id rescue @join_db.id
-        redirect_to '/' unless JoinDb.find(join_db_id).user_id == current_user.id
+        
+        if JoinDb.find(join_db_id).user_id == current_user.id
+            return true
+        else
+            redirect_to '/'
+        end
     end
 end

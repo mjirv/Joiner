@@ -21,24 +21,25 @@ describe RemoteDb do
     before(:each) do 
         @remote_db_attributes = FactoryBot.attributes_for(:remote_db)
         @remote_db_attributes[:join_db_id] = @join_db.id
-        @remote_db = RemoteDb.create!(@remote_db_attributes)
+        @remote_db_attributes_for_creation = @remote_db_attributes.reject{|k, v| k == :password}
+        @remote_db = RemoteDb.create!(@remote_db_attributes_for_creation)
     end
 
-    describe "Viewing the edit page for a RemoteDb", type: :request do
+    describe "Viewing the create page for a RemoteDb", type: :request do
         it "denies access if you're not logged in" do
-            get edit_remote_db_url(@remote_db.id)
+            get remote_dbs_new_url, params: {join_db: @join_db.id}
             expect(response).to redirect_to '/signup'
         end
 
         it "denies access if you're the wrong user" do
             post '/login', params: @wrong_user_attributes
-            get edit_remote_db_url(@remote_db.id)
+            get remote_dbs_new_url, params: {join_db: @join_db.id}
             expect(response).to redirect_to '/'
         end
 
         it "redirects you to confirm if you're logged in and the right user, but haven't confirmed your JoinDb credentials" do
             post '/login', params: @user_attributes
-            get edit_remote_db_url(@remote_db.id)
+            get remote_dbs_new_url, params: {join_db: @join_db.id}
             expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
         end
 
@@ -49,23 +50,53 @@ describe RemoteDb do
                     join_db_id: @join_db.id,
                     password: @join_db_attributes[:password]
                 }
-            get edit_remote_db_url(@remote_db.id)
+            get remote_dbs_new_url, params: {join_db: @join_db.id}
             expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
         end
     end
 
-    describe "Editing a RemoteDb", type: :request do
-
-    end
-
     describe "Creating a RemoteDb", type: :request do
-        it "denies access if you're not logged in" 
+        it "denies access if you're not logged in" do
+            post '/remote_dbs', params: {remote_db: @remote_db_attributes}
+            expect(response).to redirect_to '/signup'
+        end
 
-        it "denies access if you're the wrong user"
+        it "denies access if you're the wrong user" do
+            post '/login', params: @wrong_user_attributes
+            post '/remote_dbs', params: {remote_db: @remote_db_attributes}
+            expect(response).to redirect_to '/'
+        end
 
-        it "succeeds if you're logged in and the right user"
+        it "redirects you to confirm if you're logged in and the right user, but haven't confirmed your JoinDb credentials" do
+            post '/login', params: @user_attributes
+            post '/remote_dbs', params: {remote_db: @remote_db_attributes}
+            expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
+        end
 
-        it "is given a host and port on creation"
+        it "succeeds if you're logged in, the right user, and confirmed" do
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {remote_db: @remote_db_attributes}
+                expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
+        end
+
+        it "fails if postgres and you don't include a schema"
+
+        it "fails without a hostname"
+
+        it "fails without a port"
+
+        it "fails without a db type"
+
+        it "fails without a database name"
+
+        it "fails without a remote username"
+
+        it "exists with the right fields on creation"
     end
 
     describe "Deleting a RemoteDb", type: :request do
