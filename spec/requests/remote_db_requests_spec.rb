@@ -84,6 +84,7 @@ describe RemoteDb do
                 expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
         end
 
+        # TODO: Add these once we can actually create and connect to the JoinDb, and test RemoteDbs
         it "fails if postgres and you don't include a schema"
 
         it "fails without a hostname"
@@ -100,10 +101,26 @@ describe RemoteDb do
     end
 
     describe "Deleting a RemoteDb", type: :request do
-        it "deletes the JoinDB if you're logged in and the right user"
+        it "deletes the RemoteDb if you're logged in and the right user" do
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            get delete_remote_db_url(@remote_db.id)
+            expect(response).to redirect_to join_db_url(@join_db.id)
+        end
 
-        it "fails if you're not logged in"
+        it "fails if you're not logged in" do 
+            get delete_remote_db_url(@remote_db.id)
+            expect(response).to redirect_to '/signup'
+        end
 
-        it "fails if you're the wrong user"
+        it "fails if you're the wrong user" do
+            post '/login', params: @wrong_user_attributes
+            get delete_remote_db_url(@remote_db.id)
+            expect(response).to redirect_to '/'
+        end
     end
 end
