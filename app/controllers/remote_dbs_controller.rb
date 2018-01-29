@@ -44,7 +44,7 @@ class RemoteDbsController < ApplicationController
             if create_remote_db(@remote_db, remote_db_params[:password], session[:join_db_password]) 
                 redirect_to join_db_path(remote_db_params[:join_db_id]) and return
             else
-                @remote_db.delete
+                @remote_db.destroy
                 render :json => {:status => 422} and return
             end
         else
@@ -83,7 +83,7 @@ class RemoteDbsController < ApplicationController
     def destroy
         join_db_id = @remote_db.join_db_id
         if delete_fdw(@remote_db.join_db, @remote_db, session[:join_db_password])
-            @remote_db.delete
+            @remote_db.destroy
             redirect_to join_db_path(join_db_id)
         else
             handle_error(@remote_db)
