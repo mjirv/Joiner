@@ -35,7 +35,7 @@ class JoinDbsController < ApplicationController
                 @join_db.create_and_attach_cloud_db(join_db_params[:username],
                     join_db_params[:password])
             rescue Exception => e
-                @join_db.delete
+                @join_db.destroy
                 raise e
             end
         else
@@ -56,7 +56,7 @@ class JoinDbsController < ApplicationController
 
     # DELETE /joindb/:id
     def destroy
-        @join_db.delete
+        @join_db.destroy
         redirect_to '/'
     end
 
