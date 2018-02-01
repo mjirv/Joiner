@@ -16,6 +16,10 @@ describe RemoteDb do
         @join_db = JoinDb.create!(
             @join_db_attributes.reject{|k, v| k == :password}
         )
+        @join_db.create_and_attach_cloud_db(
+            @join_db_attributes[:username],
+            @join_db_attributes[:password]
+        )
     end
 
     before(:each) do 
@@ -51,7 +55,7 @@ describe RemoteDb do
                     password: @join_db_attributes[:password]
                 }
             get remote_dbs_new_url, params: {join_db: @join_db.id}
-            expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
+            expect(response).to have_http_status(200)
         end
     end
 
@@ -81,23 +85,105 @@ describe RemoteDb do
                     password: @join_db_attributes[:password]
                 }
             post '/remote_dbs', params: {remote_db: @remote_db_attributes}
-                expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
+            expect(response).to redirect_to join_db_url(@join_db.id)
         end
 
         # TODO: Add these once we can actually create and connect to the JoinDb, and test RemoteDbs
-        it "fails if postgres and you don't include a schema"
+        it "fails if postgres and you don't include a schema" do
+            @remote_db_attributes[:db_type] = 0
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes.reject{|k, v| k == :schema}
+            }
+            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+        end
 
-        it "fails without a hostname"
+        it "fails without a hostname" do 
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes.reject{|k, v| k == :host}
+            }
+            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+        end
 
-        it "fails without a port"
+        it "fails without a port" do
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes.reject{|k, v| k == :port}
+            }
+            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+        end
 
-        it "fails without a db type"
+        it "fails without a db type" do 
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes.reject{|k, v| k == :db_type}
+            }
+            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+        end
 
-        it "fails without a database name"
+        it "fails without a database name" do 
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes.reject{
+                    |k, v| k == :database_name
+                }
+            }
+            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+        end
 
-        it "fails without a remote username"
+        it "fails without a remote username" do
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes.reject{|k, v| k == :remote_user}
+            }
+            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+        end
 
-        it "exists with the right fields on creation"
+        it "exists with the right fields on creation" do
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes
+            }
+            expect(response).to redirect_to join_db_url(@join_db.id)
+            remote_db = @join_db.remote_dbs.last
+            expect(remote_db.host).to eq(@remote_db_attributes[:host])
+        end
     end
 
     describe "Deleting a RemoteDb", type: :request do

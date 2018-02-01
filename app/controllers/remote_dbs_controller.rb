@@ -33,7 +33,7 @@ class RemoteDbsController < ApplicationController
     end
 
     def create
-        params[:db_type] = params[:db_type].to_i
+        remote_db_params[:db_type] = remote_db_params[:db_type].to_i
         # Creates a new RemoteDb
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
 
@@ -92,6 +92,10 @@ class RemoteDbsController < ApplicationController
 
     private
     def remote_db_params
+        # TODO: Make this programmatic based on the number of db types we have
+        if ['0', '1', '2'].include? params[:join_db_id]
+            params[:join_db_id] = params[:join_db_id].to_i
+        end
         params.require(:remote_db).permit(:name, :db_type, :host, :port, :database_name, :schema, :remote_user, :password, :join_db_id)
     end
 

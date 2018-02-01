@@ -17,11 +17,11 @@ module JoindbApiMethods
         
         # Only make a superuser if this is the first user being created
         if db_user == PG_USERNAME
-            masterconn.exec("CREATE USER #{username} WITH SUPERUSER")
+            masterconn.exec("CREATE USER \"#{username}\" WITH SUPERUSER")
         else
-            masterconn.exec("CREATE USER #{username}")
+            masterconn.exec("CREATE USER \"#{username}\"")
         end
-        res = masterconn.exec("ALTER USER #{username} WITH password
+        res = masterconn.exec("ALTER USER \"#{username}\" WITH password
             '#{password}'")
         
         #If successful, delete the docker user login for security

@@ -47,36 +47,33 @@ describe JoinDb do
             expect(response).to redirect_to('/signup')
         end
 
-        it "denies access if you're the wrong user" do
-            @join_db_attributes[:user_id] = @user.id + 1
-
-            post "/login", params: @user_attributes
-            post "/join_dbs", params: {join_db: @join_db_attributes}
-            expect(response).to redirect_to '/'
-        end
+        # Don't have a test for if you're the wrong user, because it just assigns it to you
 
         it "succeeds if you're logged in and the right user" do
             post "/login", params: @user_attributes
             post "/join_dbs", params: {join_db: @join_db_attributes}
-            expect(response).to have_http_status(200)
+            expect(response).to have_http_status(302)
+
+            join_db = JoinDb.where(user_id: @user.id).last
+            expect(join_db.host).not_to be_nil
+            expect(join_db.port).not_to be_nil
+
+            # We don't want to keep adding to my AWS bill
+            join_db.destroy
         end
 
         it "fails if you don't give it a name" do
-            @join_db_attributes = @join_db_attributes.
-                reject{|k, v| k == 'name'}
+            join_db_attributes = @join_db_attributes.
+                except(:name)
 
             post "/login", params: @user_attributes
-            post "/join_dbs", params: {join_db: @join_db_attributes}
-            expect(response).to have_http_status(400)
+            post "/join_dbs", params: {join_db: join_db_attributes}
+            expect(response).to have_http_status(422)
         end
 
         it "is given a host and port on creation" do
             post "/login", params: @user_attributes
             post "/join_dbs", params: {join_db: @join_db_attributes}
-
-            join_db = JoinDb.where(user_id: @user.id).last
-            expect(join_db.host).not_to be_nil
-            expect(join_db.port).not_to be_nil
         end
     end
 

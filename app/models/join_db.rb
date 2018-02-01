@@ -3,6 +3,7 @@ class JoinDb < ApplicationRecord
     belongs_to :user
     has_many :remote_dbs, dependent: :destroy
     validates :user_id, presence: true
+    validates :name, presence: true
     before_destroy :destroy_ecs_instance
 
     def create_and_attach_cloud_db(username, password)
@@ -21,6 +22,8 @@ class JoinDb < ApplicationRecord
 
     private
     def destroy_ecs_instance
-        stop_join_db(self.task_arn)
+        if self.task_arn
+            stop_join_db(self.task_arn)
+        end
     end
 end
