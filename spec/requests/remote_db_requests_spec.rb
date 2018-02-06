@@ -77,17 +77,6 @@ describe RemoteDb do
             expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
         end
 
-        it "succeeds if you're logged in, the right user, and confirmed" do
-            post '/login', params: @user_attributes
-            post '/confirm_join_db_password', 
-                params: {
-                    join_db_id: @join_db.id,
-                    password: @join_db_attributes[:password]
-                }
-            post '/remote_dbs', params: {remote_db: @remote_db_attributes}
-            expect(response).to redirect_to join_db_url(@join_db.id)
-        end
-
         it "fails if postgres and you don't include a schema" do
             @remote_db_attributes[:db_type] = "postgres"
             post '/login', params: @user_attributes
@@ -169,7 +158,16 @@ describe RemoteDb do
             expect(response).to have_http_status(422)
         end
 
-        it "exists with the right fields on creation" do
+        it "exists with the right fields on successful creation" do
+            @remote_db_attributes = {
+                host: 'mysql-rfam-public.ebi.ac.uk',
+                port: 4497,
+                remote_user: 'rfamro',
+                password: '',
+                database_name: 'Rfam',
+                db_type: 'mysql',
+                join_db_id: @join_db.id
+            }
             post '/login', params: @user_attributes
             post '/confirm_join_db_password', 
                 params: {

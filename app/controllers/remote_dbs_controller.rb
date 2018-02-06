@@ -45,7 +45,7 @@ class RemoteDbsController < ApplicationController
                 redirect_to join_db_path(remote_db_params[:join_db_id]) and return
             else
                 @remote_db.destroy
-                render :json => {:body => @remote_db.errors.full_messages, :status => 422} and return
+                render :json => { :errors => remote_db.errors.full_messages }, :status => 422 and return
             end
         else
             handle_error(@remote_db)
