@@ -39,7 +39,7 @@ class JoinDbsController < ApplicationController
                 raise e
             end
         else
-            render json: {status: 422} and return
+            render :json => { :errors => @join_db.errors.full_messages }, :status => 422 and return
         end
 
         redirect_to @join_db
