@@ -88,9 +88,8 @@ describe RemoteDb do
             expect(response).to redirect_to join_db_url(@join_db.id)
         end
 
-        # TODO: Add these once we can actually create and connect to the JoinDb, and test RemoteDbs
         it "fails if postgres and you don't include a schema" do
-            @remote_db_attributes[:db_type] = 0
+            @remote_db_attributes[:db_type] = "postgres"
             post '/login', params: @user_attributes
             post '/confirm_join_db_password', 
                 params: {
@@ -100,7 +99,7 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :schema}
             }
-            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+            expect(response).to have_http_status(422)
         end
 
         it "fails without a hostname" do 
@@ -113,7 +112,7 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :host}
             }
-            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+            expect(response).to have_http_status(422)
         end
 
         it "fails without a port" do
@@ -126,7 +125,7 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :port}
             }
-            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+            expect(response).to have_http_status(422)
         end
 
         it "fails without a db type" do 
@@ -139,7 +138,7 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :db_type}
             }
-            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+            expect(response).to have_http_status(422)
         end
 
         it "fails without a database name" do 
@@ -154,7 +153,7 @@ describe RemoteDb do
                     |k, v| k == :database_name
                 }
             }
-            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+            expect(response).to have_http_status(422)
         end
 
         it "fails without a remote username" do
@@ -167,7 +166,7 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :remote_user}
             }
-            expect(response).to redirect_to remote_dbs_new_url(@join_db.id)
+            expect(response).to have_http_status(422)
         end
 
         it "exists with the right fields on creation" do

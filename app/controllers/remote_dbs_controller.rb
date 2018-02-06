@@ -45,7 +45,7 @@ class RemoteDbsController < ApplicationController
                 redirect_to join_db_path(remote_db_params[:join_db_id]) and return
             else
                 @remote_db.destroy
-                render :json => {:status => 422} and return
+                render :json => {:body => @remote_db.errors.full_messages, :status => 422} and return
             end
         else
             handle_error(@remote_db)
@@ -92,10 +92,6 @@ class RemoteDbsController < ApplicationController
 
     private
     def remote_db_params
-        # TODO: Make this programmatic based on the number of db types we have
-        if ['0', '1', '2'].include? params[:join_db_id]
-            params[:join_db_id] = params[:join_db_id].to_i
-        end
         params.require(:remote_db).permit(:name, :db_type, :host, :port, :database_name, :schema, :remote_user, :password, :join_db_id)
     end
 

@@ -61,7 +61,7 @@ module JoindbApiMethods
                     )")
                 
                 # Create the user mapping
-                c.exec("CREATE USER MAPPING FOR #{user_name}
+                c.exec("CREATE USER MAPPING FOR \"#{username}\"
                     SERVER #{schema_name}
                     OPTIONS (
                         odbc_USERNAME '#{remote_user}',
@@ -102,7 +102,7 @@ module JoindbApiMethods
                     )")
                 
                 # Create the user mapping
-                conn.exec("CREATE USER MAPPING FOR #{username}
+                conn.exec("CREATE USER MAPPING FOR \"#{username}\"
                     SERVER #{schema_name}
                     OPTIONS (
                         odbc_UID '#{remote_user}',
