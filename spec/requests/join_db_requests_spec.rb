@@ -16,7 +16,6 @@ describe JoinDb do
         )
     end
 
-
     describe "Viewing a JoinDb", type: :request do
         it "denies access if you're not logged in" do
             get join_db_url(@join_db.id)

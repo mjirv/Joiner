@@ -22,6 +22,11 @@ describe RemoteDb do
         )
     end
 
+    after(:all) do
+        #@join_db.destroy!
+        JoinDb.where("host LIKE '%amazonaws%'").map(&:destroy)
+    end
+
     before(:each) do 
         @remote_db_attributes = FactoryBot.attributes_for(:remote_db)
         @remote_db_attributes[:join_db_id] = @join_db.id
