@@ -1,0 +1,16 @@
+<header class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <%= link_to "Joiner", '/', id: "logo" %>
+        <nav>
+          <ul class="nav navbar-nav navbar-right">
+            <li><%= link_to "Home",   '#' %></li>
+            <% if not current_user %>
+              <li><%= link_to "Sign Up",   '/signup' %></li>
+              <li><%= link_to "Log in", '/login' %></li>
+            <% else %>
+              <li><%= link_to "Log out", '/logout' %></li>
+            <% end %>
+          </ul>
+        </nav>
+      </div>
+    </header>
