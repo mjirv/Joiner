@@ -77,7 +77,9 @@ class RemoteDbsController < ApplicationController
         join_db = JoinDb.find(remote_db.join_db_id)
         
         # Refresh the mapping via joindb_api.rb
-        Concurrent::Future.execute{ refresh_fdw(join_db, remote_db, session[:join_db_password]) }
+        refresh = Concurrent::Future.new{ refresh_fdw(join_db, remote_db, session[:join_db_password]) }
+        refresh.add_observer(Notifier.new)
+        refresh.execute
     end
 
     def destroy
