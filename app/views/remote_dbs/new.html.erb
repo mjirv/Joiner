@@ -2,34 +2,42 @@
 
 <%= form_for @remote_db do |form| %>
     <p>
-        <%= form.label(:name, "Nickname for new connection") %>
-        <%= form.text_field(:name) %>
+        <p>
+            <%= form.label(:name, "Nickname for new connection") %>
+            <%= form.text_field(:name) %>
         <br />
-        <%= form.radio_button(:db_type, @POSTGRES) %>
-        <%= form.label(:db_postgres, "PostgreSQL") %>
-        <%= form.radio_button(:db_type, @MYSQL) %>
-        <%= form.label(:db_mysql, "MySQL") %>
-        <%= form.radio_button(:db_type, @SQLSERVER) %>
-        <%= form.label(:db_sqlserver, "SQL Server") %>
+        </p>
+        <p>
+            <%= form.radio_button(:db_type, @POSTGRES) %>
+            <%= form.label(:db_postgres, "PostgreSQL") %>
+            <%= form.radio_button(:db_type, @MYSQL) %>
+            <%= form.label(:db_mysql, "MySQL") %>
+            <%= form.radio_button(:db_type, @SQLSERVER) %>
+            <%= form.label(:db_sqlserver, "SQL Server") %>
         <br />
-        <%= form.label(:host, "Host Address") %>
-        <%= form.text_field(:host) %>
+            <%= form.label(:host, "Host Address") %>
+            <%= form.text_field(:host) %>
         <br />
-        <%= form.label(:port) %>
-        <%= form.text_field(:port) %>
+            <%= form.label(:port) %>
+            <%= form.text_field(:port) %>
         <br />
-        <%= form.label(:database_name, "Database Name") %>
-        <%= form.text_field(:database_name) %>
+        </p>
+        <p>
+            <%= form.label(:database_name, "Database Name") %>
+            <%= form.text_field(:database_name) %>
         <br />
-        <%= form.label(:schema) %>
-        <%= form.text_field(:schema) %>
+            <%= form.label(:schema) %>
+            <%= form.text_field(:schema) %>
         <br />
-        <%= form.label(:remote_user, "Username") %>
-        <%= form.text_field(:remote_user) %>
+        </p>
+        <p>
+            <%= form.label(:remote_user, "Username") %>
+            <%= form.text_field(:remote_user) %>
         <br />
-        <%= form.label(:password) %>
-        <%= form.password_field(:password) %>
-        <%= form.hidden_field :join_db_id, value: @join_db_id %>
+            <%= form.label(:password) %>
+            <%= form.password_field(:password) %>
+            <%= form.hidden_field :join_db_id, value: @join_db_id %>
+        </p>
     </p>
     <p>
         <%= form.submit("Add Connection") %>
