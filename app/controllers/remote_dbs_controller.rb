@@ -77,7 +77,7 @@ class RemoteDbsController < ApplicationController
         join_db = JoinDb.find(remote_db.join_db_id)
         
         # Refresh the mapping via joindb_api.rb
-        refresh_fdw(join_db, remote_db, session[:join_db_password])
+        Concurrent::Future.execute{ refresh_fdw(join_db, remote_db, session[:join_db_password]) }
     end
 
     def destroy
@@ -102,14 +102,16 @@ class RemoteDbsController < ApplicationController
     def create_remote_db(remote_db, remote_password, password)
         # Calls the API to add a FDW to the JoinDB
         join_db = remote_db.join_db
-        if remote_db.postgres?
-            add_fdw_postgres(join_db, remote_db, remote_password, password)
-        elsif remote_db.mysql?
-            add_fdw_mysql(join_db, remote_db, remote_password, password)
-        elsif remote_db.sql_server?
-            add_fdw_sql_server(join_db, remote_db, remote_password, password)
-        else
-            return false
+        Concurrent::Future.execute do |_|
+            if remote_db.postgres?
+                add_fdw_postgres(join_db, remote_db, remote_password, password)
+            elsif remote_db.mysql?
+                add_fdw_mysql(join_db, remote_db, remote_password, password)
+            elsif remote_db.sql_server?
+                add_fdw_sql_server(join_db, remote_db, remote_password, password)
+            else
+                return false
+            end
         end
     end
 

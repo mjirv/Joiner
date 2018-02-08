@@ -29,11 +29,13 @@ class JoinDbsController < ApplicationController
         @join_db = JoinDb.create(join_db_params.
             reject{|k, v| k == 'password' }.
             merge(user_id: current_user.id))
+        @join_db.host = "provisioning..."
         if @join_db.save
             begin
                 # Create the JoinDb
-                @join_db.create_and_attach_cloud_db(join_db_params[:username],
+                Concurrent::Future.execute { @join_db.create_and_attach_cloud_db(join_db_params[:username],
                     join_db_params[:password])
+                }
             rescue Exception => e
                 @join_db.destroy
                 raise e

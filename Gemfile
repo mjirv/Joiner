@@ -21,6 +21,7 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem 'pg'
 gem 'bootstrap-sass'
+gem 'concurrent-ruby', require: 'concurrent'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
