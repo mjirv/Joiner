@@ -4,7 +4,8 @@ class ApplicationController < ActionController::Base
 
     class Notifier
         def update(time, value, reason)
-            flash[:notice] = "#{value} | #{reason}"
+            #flash[:notice] = "#{value} | #{reason}"
+            puts("#{value} | #{reason}")
         end
     end
 

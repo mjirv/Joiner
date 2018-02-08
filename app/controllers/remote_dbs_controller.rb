@@ -77,9 +77,7 @@ class RemoteDbsController < ApplicationController
         join_db = JoinDb.find(remote_db.join_db_id)
         
         # Refresh the mapping via joindb_api.rb
-        refresh = Concurrent::Future.new{ refresh_fdw(join_db, remote_db, session[:join_db_password]) }
-        refresh.add_observer(Notifier.new)
-        refresh.execute
+        Concurrent::Promise.execute{ refresh_fdw(join_db, remote_db, session[:join_db_password]) }.on_success{|res| flash[:notice] = "success maybe?"}.rescue{|reason| flash[:notice] = "An error occurred while refreshing your connection."}
     end
 
     def destroy
