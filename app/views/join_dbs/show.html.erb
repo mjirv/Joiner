@@ -1,23 +1,20 @@
 <h1><%= @join_db.name %></h1>
 <!-- <%= link_to 'Edit', edit_join_db_path(@join_db.id) %> -->
 <h3>Info</h3>
-<p>
-    <ul>
-        <li><b>Host:</b> <%= @join_db.host %>
-        <li><b>Port:</b> <%= @join_db.port %>
-        <li><b>Username:</b> <%= @join_db.username %>
-        <li><b>Database:</b> joiner
-    </ul>
-</p>
+<%= render partial: 'join_dbs/info', locals: {join_db: @join_db} %>
 
 <h3>Connections</h3>
 <p>
     <%= link_to 'Add Connection', remote_dbs_new_path(join_db: @join_db.id) %>
 </p>
 <% @remote_dbs.each do |rdb| %>
-    <p>
-        <b><%= rdb.name %></b>
-        <!-- <%= link_to 'Edit', edit_remote_db_path(rdb.id) %> | --><%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post %> | <%= link_to 'Delete', delete_remote_db_path(rdb.id) %>
+    <div class="infoTile">
+        <h4><%= rdb.name %></h4>
+        <p>
+        <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post %>
+        <br />
+        <%= link_to 'Delete', delete_remote_db_path(rdb.id), {class: "deleteLink"} %>
+        </p>
         <ul>
             <li>DB Type: <%= rdb.db_type %></li>
             <li>Host: <%= rdb.host %></li>
@@ -26,5 +23,5 @@
             <li>Schema: <%= rdb.schema %></li>
             <li>Username: <%= rdb.remote_user %></li>
         </ul>
-    </p>
+    </div>
 <% end %>
