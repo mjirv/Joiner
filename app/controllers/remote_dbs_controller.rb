@@ -12,6 +12,7 @@ class RemoteDbsController < ApplicationController
     before_action only: [:create] do
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
     end
+    before_action :show_notifications
 
     def show
         # Show RemoteDb details
@@ -77,7 +78,13 @@ class RemoteDbsController < ApplicationController
         join_db = JoinDb.find(remote_db.join_db_id)
         
         # Refresh the mapping via joindb_api.rb
-        Concurrent::Promise.execute{ refresh_fdw(join_db, remote_db, session[:join_db_password]) }.on_success{|res| flash[:notice] = "success maybe?"}.rescue{|reason| flash[:notice] = "An error occurred while refreshing your connection."}
+        Concurrent::Promise.execute{ 
+            refresh_fdw(join_db, remote_db, session[:join_db_password])
+        }.on_success{|res| create_success_notification(
+            current_user.id, "Successfully refreshed connection!"
+        )}.rescue{|reason| create_error_notification(
+            current_user.id, "An error occurred while refreshing your connection."
+        )}
     end
 
     def destroy
@@ -102,7 +109,7 @@ class RemoteDbsController < ApplicationController
     def create_remote_db(remote_db, remote_password, password)
         # Calls the API to add a FDW to the JoinDB
         join_db = remote_db.join_db
-        Concurrent::Future.execute do |_|
+        promise = Concurrent::Promise.new do |_|
             if remote_db.postgres?
                 add_fdw_postgres(join_db, remote_db, remote_password, password)
             elsif remote_db.mysql?
@@ -113,6 +120,9 @@ class RemoteDbsController < ApplicationController
                 return false
             end
         end
+        promise.execute.rescue{|reason| create_error_notification(
+            current_user.id,
+            "Error creating your Connection. Error was: #{reason}")}
     end
 
     def handle_error(remote_db)

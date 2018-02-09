@@ -2,6 +2,7 @@
 
 class UsersController < ApplicationController
     before_action :authorize, only: [:show]
+    before_action :show_notifications, only: [:show]
 
     def new
     end
