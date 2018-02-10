@@ -2,7 +2,7 @@ class JoinDbsController < ApplicationController
     before_action :authorize
     before_action :set_join_db, only: [:show, :update, :edit, :destroy, :confirm_password_view]
     before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
-    before_action :confirm_join_db_password, only: [:update, :edit]
+    before_action :confirm_join_db_password, only: [:update]
     before_action :show_notifications
 
     # GET /joindb/:id

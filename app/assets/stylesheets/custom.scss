@@ -44,10 +44,26 @@ body {
     }
 }
 
-button {
-  background-color: #eee82c;
-  color: #f0f0f4;
+.mainButton {
+  background-color: #91cb3e;
   display: block;
+  border: 0px;
+  border-radius: 2px;
+  font-weight: bold;
+  &:hover {
+    background-color: #53a548;
+  }
+  padding: 5px;
+}
+
+.button {
+  background-color: #91cb3e;
+  display: block;
+  border: 0px;
+  border-radius: 2px;
+  &:hover {
+    background-color: #53a548;
+  }
 }
 
 /* typography */
