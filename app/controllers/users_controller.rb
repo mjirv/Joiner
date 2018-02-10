@@ -13,6 +13,7 @@ class UsersController < ApplicationController
             session[:user_id] = user.id
             redirect_to '/'
         else
+            flash[:notice] = "Could not create your user."
             redirect_to '/signup'
         end
     end

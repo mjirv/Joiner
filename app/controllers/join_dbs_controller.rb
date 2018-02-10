@@ -73,12 +73,17 @@ class JoinDbsController < ApplicationController
 
     def confirm_password
         @join_db = JoinDb.find(params[:join_db_id])
-        if open_connection(@join_db, params[:password])
+        begin
+            open_connection(@join_db, params[:password])
             session[:join_db_id] = @join_db.id
             session[:join_db_password] = params[:password]
             redirect_to @join_db
-        else
-            redirect_to confirm_join_db_password(@join_db)
+        rescue Exception => e
+            create_error_notification(
+                current_user.id,
+                "Could not verify your login: #{e}"
+            )
+            redirect_to confirm_join_db_password_path(@join_db)
         end
     end
 

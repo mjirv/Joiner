@@ -127,7 +127,11 @@ class RemoteDbsController < ApplicationController
     end
 
     def handle_error(remote_db)
-        render :json => { :errors => remote_db.errors.full_messages }, :status => 422        
+        create_error_notification(
+            current_user.id,
+            "Could not delete your connection: #{remote_db.errors.full_messages}"
+        )
+        redirect_to join_db_path(remote_db.join_db_id)
     end
 
     def confirm_join_db_password(join_db_id = nil)

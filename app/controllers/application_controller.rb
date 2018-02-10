@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
     helper_method :current_user
     
     def authorize
+        flash[:notice] = "You are not logged in. Please log in or sign up!"
         redirect_to '/signup' and return unless current_user
     end
 
@@ -17,6 +18,11 @@ class ApplicationController < ActionController::Base
         if JoinDb.find(join_db_id).user_id == current_user.id
             return true
         else
+            create_error_notification(
+                current_user.id,
+                "Hey, that JoinDb doesn't belong to you! (Or we couldn't connect,
+                so try again in a few minutes.)"
+            )
             redirect_to '/'
         end
     end
