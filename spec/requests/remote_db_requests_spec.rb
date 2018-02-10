@@ -190,13 +190,29 @@ describe RemoteDb do
 
     describe "Deleting a RemoteDb", type: :request do
         it "deletes the RemoteDb if you're logged in and the right user" do
+            @remote_db_attributes = {
+                host: 'mysql-rfam-public.ebi.ac.uk',
+                port: 4497,
+                remote_user: 'rfamro',
+                password: '',
+                database_name: 'Rfam',
+                db_type: 'mysql',
+                join_db_id: @join_db.id
+            }
             post '/login', params: @user_attributes
             post '/confirm_join_db_password', 
                 params: {
                     join_db_id: @join_db.id,
                     password: @join_db_attributes[:password]
                 }
-            get delete_remote_db_url(@remote_db.id)
+            post '/remote_dbs', params: {
+                remote_db: @remote_db_attributes
+            }
+
+            sleep(240)
+
+            remote_db = @join_db.remote_dbs.last
+            get delete_remote_db_url(remote_db.id)
             expect(response).to redirect_to join_db_url(@join_db.id)
         end
 

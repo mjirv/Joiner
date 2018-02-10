@@ -12,7 +12,7 @@ class RemoteDbsController < ApplicationController
     before_action only: [:create] do
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
     end
-    before_action :show_notifications
+    before_action :show_notifications, only: [:show, :edit, :new]
 
     def show
         # Show RemoteDb details
@@ -89,10 +89,11 @@ class RemoteDbsController < ApplicationController
 
     def destroy
         join_db_id = @remote_db.join_db_id
-        if delete_fdw(@remote_db.join_db, @remote_db, session[:join_db_password])
+        begin
+            delete_fdw(@remote_db.join_db, @remote_db, session[:join_db_password])
             @remote_db.destroy
             redirect_to join_db_path(join_db_id)
-        else
+        rescue
             handle_error(@remote_db)
         end
     end
