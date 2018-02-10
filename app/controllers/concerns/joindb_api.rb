@@ -45,12 +45,19 @@ module JoindbApi
         conn = open_connection(join_db, password)
         schema_name = remote_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
         remote_schema = remote_db.postgres? ? "#{remote_db.schema}" : "#{remote_db.database_name}"
+        options = remote_db.postgres? ? "" : "OPTIONS (
+            odbc_DATABASE '#{schema_name}'
+        )"
 
-        conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
-        conn.exec("CREATE SCHEMA #{schema_name}")
-        conn.exec("IMPORT FOREIGN SCHEMA \"#{remote_schema}\"
-            FROM SERVER #{schema_name}
-            INTO #{schema_name}")
+        conn.transaction do |t|
+            t.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
+            t.exec("CREATE SCHEMA #{schema_name}")
+            t.exec("IMPORT FOREIGN SCHEMA \"#{remote_schema}\"
+                FROM SERVER #{schema_name}
+                INTO #{schema_name}
+                #{options}")
+        end
+        conn.close()
     end
 
     def delete_fdw(join_db, remote_db, password)
@@ -61,6 +68,7 @@ module JoindbApi
 
         conn.exec("DROP SERVER IF EXISTS #{schema_name} CASCADE")
         conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
+        conn.close()
     end
 
     # The following methods are wrappers over the open source

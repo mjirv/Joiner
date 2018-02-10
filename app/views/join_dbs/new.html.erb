@@ -1,17 +1,19 @@
 <h1>New JoinDb</h1>
 
-<%= form_for @join_db do |form| %>
-    <p>
-        <%= form.label :nickname %>
-        <%= form.text_field :name %>
-    </p>
-    <p>
-        <%= form.label :choose_a_username %>
-        <%= form.text_field :username %>
-        <br />
-        <%= form.label :choose_a_password %>
-        <%= form.password_field :password %>
-    <p>
-        <%= form.submit %>
-    </p>
-<% end %>
+<div class="infoTile">
+    <%= form_for @join_db do |form| %>
+        <p>
+            <%= form.label :nickname %>
+            <%= form.text_field :name %>
+        </p>
+        <p>
+            <%= form.label :choose_a_username %>
+            <%= form.text_field :username %>
+            <br />
+            <%= form.label :choose_a_password %>
+            <%= form.password_field :password %>
+        <p>
+            <%= form.submit class: "button" %>
+        </p>
+    <% end %>
+</div>

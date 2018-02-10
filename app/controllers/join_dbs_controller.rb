@@ -2,7 +2,8 @@ class JoinDbsController < ApplicationController
     before_action :authorize
     before_action :set_join_db, only: [:show, :update, :edit, :destroy, :confirm_password_view]
     before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
-    before_action :confirm_join_db_password, only: [:update, :edit]
+    before_action :confirm_join_db_password, only: [:update]
+    before_action :show_notifications
 
     # GET /joindb/:id
     def show
@@ -29,14 +30,21 @@ class JoinDbsController < ApplicationController
         @join_db = JoinDb.create(join_db_params.
             reject{|k, v| k == 'password' }.
             merge(user_id: current_user.id))
+        @join_db.host = "provisioning..."
         if @join_db.save
-            begin
-                # Create the JoinDb
-                @join_db.create_and_attach_cloud_db(join_db_params[:username],
-                    join_db_params[:password])
-            rescue Exception => e
+            # Create the JoinDb
+            Concurrent::Promise.execute { 
+                @join_db.create_and_attach_cloud_db(
+                    join_db_params[:username],
+                    join_db_params[:password]
+                )
+            }.rescue do |reason|
+                create_error_notification(
+                    current_user.id,
+                    "Error creating your JoinDb. Please try again in a
+                    few minutes. Error was: #{reason}"
+                )
                 @join_db.destroy
-                raise e
             end
         else
             render :json => { :errors => @join_db.errors.full_messages }, :status => 422 and return
@@ -65,12 +73,17 @@ class JoinDbsController < ApplicationController
 
     def confirm_password
         @join_db = JoinDb.find(params[:join_db_id])
-        if open_connection(@join_db, params[:password])
+        begin
+            open_connection(@join_db, params[:password])
             session[:join_db_id] = @join_db.id
             session[:join_db_password] = params[:password]
             redirect_to @join_db
-        else
-            redirect_to confirm_join_db_password(@join_db)
+        rescue Exception => e
+            create_error_notification(
+                current_user.id,
+                "Could not verify your login: #{e}"
+            )
+            redirect_to confirm_join_db_password_path(@join_db)
         end
     end
 

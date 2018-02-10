@@ -12,6 +12,7 @@ class RemoteDbsController < ApplicationController
     before_action only: [:create] do
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
     end
+    before_action :show_notifications, only: [:show, :edit, :new]
 
     def show
         # Show RemoteDb details
@@ -77,15 +78,22 @@ class RemoteDbsController < ApplicationController
         join_db = JoinDb.find(remote_db.join_db_id)
         
         # Refresh the mapping via joindb_api.rb
-        refresh_fdw(join_db, remote_db, session[:join_db_password])
+        Concurrent::Promise.execute{ 
+            refresh_fdw(join_db, remote_db, session[:join_db_password])
+        }.on_success{|res| create_success_notification(
+            current_user.id, "Successfully refreshed connection!"
+        )}.rescue{|reason| create_error_notification(
+            current_user.id, "An error occurred while refreshing your connection."
+        )}
     end
 
     def destroy
         join_db_id = @remote_db.join_db_id
-        if delete_fdw(@remote_db.join_db, @remote_db, session[:join_db_password])
+        begin
+            delete_fdw(@remote_db.join_db, @remote_db, session[:join_db_password])
             @remote_db.destroy
             redirect_to join_db_path(join_db_id)
-        else
+        rescue
             handle_error(@remote_db)
         end
     end
@@ -102,19 +110,28 @@ class RemoteDbsController < ApplicationController
     def create_remote_db(remote_db, remote_password, password)
         # Calls the API to add a FDW to the JoinDB
         join_db = remote_db.join_db
-        if remote_db.postgres?
-            add_fdw_postgres(join_db, remote_db, remote_password, password)
-        elsif remote_db.mysql?
-            add_fdw_mysql(join_db, remote_db, remote_password, password)
-        elsif remote_db.sql_server?
-            add_fdw_sql_server(join_db, remote_db, remote_password, password)
-        else
-            return false
+        promise = Concurrent::Promise.new do |_|
+            if remote_db.postgres?
+                add_fdw_postgres(join_db, remote_db, remote_password, password)
+            elsif remote_db.mysql?
+                add_fdw_mysql(join_db, remote_db, remote_password, password)
+            elsif remote_db.sql_server?
+                add_fdw_sql_server(join_db, remote_db, remote_password, password)
+            else
+                return false
+            end
         end
+        promise.execute.rescue{|reason| create_error_notification(
+            current_user.id,
+            "Error creating your Connection. Error was: #{reason}")}
     end
 
     def handle_error(remote_db)
-        render :json => { :errors => remote_db.errors.full_messages }, :status => 422        
+        create_error_notification(
+            current_user.id,
+            "Could not delete your connection: #{remote_db.errors.full_messages}"
+        )
+        redirect_to join_db_path(remote_db.join_db_id)
     end
 
     def confirm_join_db_password(join_db_id = nil)

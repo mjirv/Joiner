@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180128233317) do
+ActiveRecord::Schema.define(version: 20180209032532) do
 
   create_table "join_dbs", force: :cascade do |t|
     t.string   "name"
@@ -22,6 +22,16 @@ ActiveRecord::Schema.define(version: 20180128233317) do
     t.string   "username"
     t.         "task_arn"
     t.index ["user_id"], name: "index_join_dbs_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string   "message"
+    t.integer  "notification_type"
+    t.integer  "user_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.integer  "status"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "remote_dbs", force: :cascade do |t|

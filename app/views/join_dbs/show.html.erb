@@ -11,7 +11,7 @@
     <div class="infoTile">
         <h4><%= rdb.name %></h4>
         <p>
-        <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post %>
+        <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "button" %>
         <br />
         <%= link_to 'Delete', delete_remote_db_path(rdb.id), {class: "deleteLink"} %>
         </p>

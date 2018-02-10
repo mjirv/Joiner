@@ -2,6 +2,7 @@
 
 class UsersController < ApplicationController
     before_action :authorize, only: [:show]
+    before_action :show_notifications, only: [:show]
 
     def new
     end
@@ -12,6 +13,7 @@ class UsersController < ApplicationController
             session[:user_id] = user.id
             redirect_to '/'
         else
+            flash[:notice] = "Could not create your user."
             redirect_to '/signup'
         end
     end

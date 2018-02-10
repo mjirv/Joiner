@@ -121,6 +121,7 @@ module JoindbApiMethods
         rescue StandardError
             $stderr.print "Error: #{$!}"
         end
+        conn.close()
     end
 
     # Adds a CSV
@@ -158,6 +159,7 @@ module JoindbApiMethods
         # Show the schemas
         conn.send_query("SELECT schema_name FROM information_schema.schemata")
         conn.get_result
+        conn.close()
     end
 
     def get_foreign_servers(username, password, db_name, db_host, port)
@@ -166,6 +168,7 @@ module JoindbApiMethods
         # Show the servers
         conn.send_query("SELECT srvname, srvoptions FROM pg_foreign_server")
         conn.get_result
+        conn.close()
     end
 
     def get_local_tables(username, password, db_name, db_host, port)
@@ -176,6 +179,7 @@ module JoindbApiMethods
             schemaname not in ('pg_catalog', 'information_schema') 
             ORDER BY schemaname desc;")
         conn.get_result
+        conn.close()
     end
 
     def get_foreign_tables(username, password, db_name, db_host, port)
@@ -184,5 +188,6 @@ module JoindbApiMethods
         # Show the tables
         conn.send_query("SELECT ftoptions FROM pg_foreign_table")
         conn.get_result
+        conn.close()
     end
 end
