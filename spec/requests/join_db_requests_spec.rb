@@ -4,6 +4,7 @@ require 'rails_helper'
 
 describe JoinDb do
     before(:all) do
+        User.destroy_all
         @user_attributes = FactoryBot.attributes_for(:user)
         @user = User.create!(@user_attributes)
     end
@@ -14,6 +15,10 @@ describe JoinDb do
         @join_db = JoinDb.create!(
             @join_db_attributes.reject {|k, v| k == :password}
         )
+    end
+
+    after(:all) do
+        User.destroy_all
     end
 
     describe "Viewing a JoinDb", type: :request do
@@ -55,10 +60,6 @@ describe JoinDb do
 
             join_db = JoinDb.where(user_id: @user.id).last
             expect(join_db.host).not_to be_nil
-            expect(join_db.port).not_to be_nil
-
-            # We don't want to keep adding to my AWS bill
-            join_db.destroy
         end
 
         it "fails if you don't give it a name" do
