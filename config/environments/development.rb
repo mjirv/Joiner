@@ -36,7 +36,7 @@ Rails.application.configure do
     :address              => "smtp-relay.gmail.com",  
     :port                 => 587,  
     :user_name            => "michael@getjoiner.com", 
-    :password             => ENV['GMAIL_PASSWORD'],  
+    :password             => ENV['MAIL_PASSWORD'],  
     :authentication       => "plain",
     :enable_starttls_auto => true
   }
