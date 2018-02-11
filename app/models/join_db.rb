@@ -16,7 +16,7 @@ class JoinDb < ApplicationRecord
         # Add the user to it
         # Wait a while to make sure this works
         # TODO: Make this asynchronous or some shit
-        sleep(180)
+        sleep(240)
         add_user(username, password, self)
     end
 

@@ -49,7 +49,11 @@ class RemoteDbsController < ApplicationController
                 render :json => { :errors => remote_db.errors.full_messages }, :status => 422 and return
             end
         else
-            handle_error(@remote_db)
+            handle_error(
+                @remote_db,
+                "Could not create your Connection: 
+                    #{@remote_db.errors.full_messages}"
+            )
         end
     end
 
@@ -94,7 +98,11 @@ class RemoteDbsController < ApplicationController
             @remote_db.destroy
             redirect_to join_db_path(join_db_id)
         rescue
-            handle_error(@remote_db)
+            handle_error(
+                @remote_db,
+                "Could not delete your connection:
+                    #{@remote_db.errors.full_messages}"
+            )
         end
     end
 
@@ -123,13 +131,14 @@ class RemoteDbsController < ApplicationController
         end
         promise.execute.rescue{|reason| create_error_notification(
             current_user.id,
-            "Error creating your Connection. Error was: #{reason}")}
+            "Error creating your Connection. Error was: #{reason}"
+        )}
     end
 
-    def handle_error(remote_db)
+    def handle_error(remote_db, message)
         create_error_notification(
             current_user.id,
-            "Could not delete your connection: #{remote_db.errors.full_messages}"
+            message
         )
         redirect_to join_db_path(remote_db.join_db_id)
     end

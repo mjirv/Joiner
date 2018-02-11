@@ -11,6 +11,7 @@ describe "Public access to User Dashboard", type: :request do
 
     it "allows access to users#show when signed in" do
         user_attributes = FactoryBot.attributes_for(:user)
+        user_attributes[:email_confirmed] = true
         User.create!(user_attributes)
         post "/login", params: user_attributes 
         expect(response).to redirect_to "/"
@@ -28,6 +29,22 @@ describe "Logging in", type: :request do
         post "/login", params: fake_user_attributes
         expect(response).to redirect_to "/login"
     end
+
+    it "does not let you log in if you haven't confirmed your email" do
+        user_attributes = FactoryBot.attributes_for(:user)
+        post '/users', params: {user: user_attributes}
+        post '/login', params: user_attributes
+        expect(response).to redirect_to '/login'
+    end
+
+    it "lets you log in if you have confirmed your email" do
+        user_attributes = FactoryBot.attributes_for(:user)
+        post '/users', params: {user: user_attributes}
+        user = User.last
+        get confirm_email_user_path(user.confirm_token)
+        post '/login', params: user_attributes
+        expect(response).to redirect_to '/'
+    end
 end
 
 describe "Signing up", type: :request do
@@ -41,7 +58,7 @@ describe "Signing up", type: :request do
     it "approves signup with a valid email" do
         user_attributes = FactoryBot.attributes_for(:user)
         post "/users", params: {user: user_attributes}
-        expect(response).to redirect_to "/"
+        expect(response).to redirect_to "/login"
     end
 
     it "denies signup without a unique email" do
