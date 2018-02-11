@@ -4,6 +4,7 @@ class JoinDbsController < ApplicationController
     before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
     before_action :confirm_join_db_password, only: [:update]
     before_action :show_notifications
+    before_action :check_trial_joindb_limit, only: [:new, :create]
 
     # GET /joindb/:id
     def show
@@ -98,6 +99,17 @@ class JoinDbsController < ApplicationController
 
     def confirm_join_db_password
         redirect_to confirm_join_db_password_path(@join_db.id) if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
+    end
+
+    def check_trial_joindb_limit
+        # Limit trial users to 1 JoinDb
+        if current_user.tier == "trial" and JoinDb.where(user_id: current_user.id).count > 0
+            create_error_notification(
+                current_user.id,
+                "Please upgrade to create more than one JoinDB. Contact us at michael@getjoiner.com to upgrade!"
+            )
+            redirect_to '/'
+        end
     end
 end
 

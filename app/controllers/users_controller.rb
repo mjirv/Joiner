@@ -10,8 +10,11 @@ class UsersController < ApplicationController
     def create
         user = User.new(user_params)
         if user.save
-            session[:user_id] = user.id
-            redirect_to '/'
+            ApplicationMailer.registration_confirmation(user).deliver
+            #TODO: Make this flash[:success]
+            flash[:notice] = "Please confirm your email address to continue."
+            #session[:user_id] = user.id
+            redirect_to '/login'
         else
             flash[:notice] = "Could not create your user."
             redirect_to '/signup'
@@ -20,6 +23,19 @@ class UsersController < ApplicationController
 
     def show
         @join_dbs = JoinDb.where(user_id: session[:user_id])
+    end
+
+    def confirm_email
+        user = User.find_by_confirm_token(params[:id])
+        if user
+            user.email_activate
+            flash[:notice] = "Welcome to Joiner. Your email has been confirmed!"
+            session[:user_id] = user.id
+            redirect_to '/'
+        else
+            flash[:notice] = "Sorry, that user does not exist."
+            redirect_to '/'
+        end
     end
 
     private

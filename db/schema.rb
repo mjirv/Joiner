@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180209032532) do
+ActiveRecord::Schema.define(version: 20180211062944) do
 
   create_table "join_dbs", force: :cascade do |t|
     t.string   "name"
@@ -52,8 +52,11 @@ ActiveRecord::Schema.define(version: 20180209032532) do
     t.string   "name"
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.boolean  "email_confirmed", default: false
+    t.string   "confirm_token"
+    t.integer  "tier",            default: 0
   end
 
 end
