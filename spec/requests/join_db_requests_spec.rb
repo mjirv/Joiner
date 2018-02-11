@@ -23,6 +23,7 @@ describe JoinDb do
     end
 
     after(:all) do
+        JoinDb.where("host LIKE '%amazonaws%'").map(&:destroy)
         User.destroy_all
     end
 
