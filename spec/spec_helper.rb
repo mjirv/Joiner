@@ -13,6 +13,11 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+# Set this so test JoinDbs get created in a separate cluster
+# so we can get rid of them if any get stranded
+ENV['CLUSTER'] = 'test'
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

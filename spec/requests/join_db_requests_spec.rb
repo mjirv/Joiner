@@ -69,8 +69,6 @@ describe JoinDb do
 
             join_db = JoinDb.where(user_id: @user.id).last
             expect(join_db.host).not_to be_nil
-
-            join_db.destroy!
         end
 
         it "fails if you are a trial user and have a JoinDb already" do
