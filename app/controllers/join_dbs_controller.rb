@@ -98,7 +98,7 @@ class JoinDbsController < ApplicationController
     end
 
     def confirm_join_db_password
-        redirect_to confirm_join_db_password_path(@join_db.id) if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
+        redirect_to confirm_join_db_password_path(@join_db.id) and return if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
     end
 
     def check_trial_joindb_limit
@@ -108,7 +108,7 @@ class JoinDbsController < ApplicationController
                 current_user.id,
                 "Please upgrade to create more than one JoinDB. Contact us at michael@getjoiner.com to upgrade!"
             )
-            redirect_to '/'
+            redirect_to '/' and return
         end
     end
 end

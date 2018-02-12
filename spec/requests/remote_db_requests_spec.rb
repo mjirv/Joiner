@@ -31,7 +31,8 @@ describe RemoteDb do
 
     after(:all) do
         #@join_db.destroy!
-        JoinDb.where("host LIKE '%amazonaws%'").map(&:destroy)
+        #JoinDb.where("host LIKE '%amazonaws%'").map(&:destroy)
+        #JoinDb.destroy_all
     end
 
     before(:each) do 

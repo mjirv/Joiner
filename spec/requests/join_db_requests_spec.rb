@@ -23,8 +23,8 @@ describe JoinDb do
     end
 
     after(:all) do
-        JoinDb.where("host LIKE '%amazonaws%'").map(&:destroy)
-        User.destroy_all
+        #JoinDb.destroy_all
+        #User.destroy_all
     end
 
     describe "Viewing a JoinDb", type: :request do
@@ -65,8 +65,12 @@ describe JoinDb do
             post "/join_dbs", params: {join_db: @join_db_attributes}
             expect(response).to have_http_status(302)
 
+            sleep(15)
+
             join_db = JoinDb.where(user_id: @user.id).last
             expect(join_db.host).not_to be_nil
+
+            join_db.destroy!
         end
 
         it "fails if you are a trial user and have a JoinDb already" do
@@ -93,11 +97,6 @@ describe JoinDb do
             post "/login", params: @user_attributes
             post "/join_dbs", params: {join_db: join_db_attributes}
             expect(response).to have_http_status(422)
-        end
-
-        it "is given a host and port on creation" do
-            post "/login", params: @user_attributes
-            post "/join_dbs", params: {join_db: @join_db_attributes}
         end
     end
 
