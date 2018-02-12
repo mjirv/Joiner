@@ -17,7 +17,7 @@ class JoinDb < ApplicationRecord
         self.task_arn = connection_info[:task_arn]
 
         begin
-            self.save
+            self.save!
         rescue Exception => e
             stop_join_db(task_arn)
             raise e

@@ -65,10 +65,15 @@ describe JoinDb do
             post "/join_dbs", params: {join_db: @join_db_attributes}
             expect(response).to have_http_status(302)
 
-            sleep(15)
+            sleep(30)
 
-            join_db = JoinDb.where(user_id: @user.id).last
+            join_db = JoinDb.where(name: @join_db_attributes[:name]).last
+            join_db.reload
             expect(join_db.host).not_to be_nil
+            expect(join_db.port).not_to be_nil
+            expect(join_db.task_arn).not_to be_nil
+
+            join_db.destroy!
         end
 
         it "fails if you are a trial user and have a JoinDb already" do
