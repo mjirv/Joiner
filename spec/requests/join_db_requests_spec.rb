@@ -65,7 +65,7 @@ describe JoinDb do
             post "/join_dbs", params: {join_db: @join_db_attributes}
             expect(response).to have_http_status(302)
 
-            sleep(30)
+            sleep(90)
 
             join_db = JoinDb.where(name: @join_db_attributes[:name]).last
             join_db.reload
