@@ -7,6 +7,11 @@ describe JoinDb do
         User.destroy_all
         @user_attributes = FactoryBot.attributes_for(:user)
         @user = User.create!(@user_attributes)
+        @user.email_confirmed = true
+
+        # So the user doesn't get limited to creating one JoinDb
+        @user.tier = "paid"
+        @user.save!
     end
 
     before(:each) do
@@ -18,7 +23,8 @@ describe JoinDb do
     end
 
     after(:all) do
-        User.destroy_all
+        #JoinDb.destroy_all
+        #User.destroy_all
     end
 
     describe "Viewing a JoinDb", type: :request do
@@ -29,6 +35,7 @@ describe JoinDb do
 
         it "denies access if you're the wrong user" do
             new_user_attributes = FactoryBot.attributes_for(:user)
+            new_user_attributes[:email_confirmed] = true
             User.create!(new_user_attributes)
 
             post "/login", params: new_user_attributes
@@ -58,8 +65,32 @@ describe JoinDb do
             post "/join_dbs", params: {join_db: @join_db_attributes}
             expect(response).to have_http_status(302)
 
-            join_db = JoinDb.where(user_id: @user.id).last
+            sleep(90)
+
+            join_db = JoinDb.where(name: @join_db_attributes[:name]).last
+            join_db.reload
             expect(join_db.host).not_to be_nil
+            expect(join_db.port).not_to be_nil
+            expect(join_db.task_arn).not_to be_nil
+
+            join_db.destroy!
+        end
+
+        it "fails if you are a trial user and have a JoinDb already" do
+            @user.tier = "trial"
+            @user.save!
+
+            initial_join_db_count = JoinDb.where(user_id: @user.id).count
+            post "/login", params: @user_attributes
+            post "/join_dbs", params: {join_db: @join_db_attributes}
+            expect(response).to redirect_to '/'
+
+            final_join_db_count = JoinDb.where(user_id: @user.id).count
+            expect(final_join_db_count).to eq(initial_join_db_count)
+
+            # Set it back so the other tests don't fail
+            @user.tier = "paid"
+            @user.save!
         end
 
         it "fails if you don't give it a name" do
@@ -69,11 +100,6 @@ describe JoinDb do
             post "/login", params: @user_attributes
             post "/join_dbs", params: {join_db: join_db_attributes}
             expect(response).to have_http_status(422)
-        end
-
-        it "is given a host and port on creation" do
-            post "/login", params: @user_attributes
-            post "/join_dbs", params: {join_db: @join_db_attributes}
         end
     end
 
@@ -92,6 +118,7 @@ describe JoinDb do
 
         it "fails if you're the wrong user" do
             new_user_attributes = FactoryBot.attributes_for(:user)
+            new_user_attributes[:email_confirmed] = true
             new_user = User.create!(new_user_attributes)
 
             post '/login', params: new_user_attributes

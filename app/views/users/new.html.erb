@@ -1,19 +1,18 @@
 <!-- app/views/users/new.html.erb -->
 
-<h1>Sign Up!</h1>
+<h2><%= @page_title %></h2>
 
+<p>Enter your name, email address, and a password to get started with Joiner!</p>
 <div class="infoTile">
-  <%= form_for :user, url: '/users' do |f| %>
+  <%= form_for :user, url: '/users', class: 'form-horizontal center' do |f| %>
     <p>
-      Name: <%= f.text_field :name %>
-      <br />
-      Email: <%= f.text_field :email %>
+      Name: <%= f.text_field :name, class: "form-control" %>
+      Email: <%= f.text_field :email, class: "form-control" %>
     </p>
     <br />
     <p>
-      Password: <%= f.password_field :password %>
-      <br />
-      Password Confirmation: <%= f.password_field :password_confirmation %>
+      Password: <%= f.password_field :password, class: "form-control" %>
+      Password Confirmation: <%= f.password_field :password_confirmation, class: "form-control" %>
     </p>
     <%= f.submit "Submit", class: "mainButton" %>
 

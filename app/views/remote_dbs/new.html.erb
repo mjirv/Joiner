@@ -1,45 +1,42 @@
-<h1>New Connection</h1>
+<h2>New Connection</h2>
 
+<div class="infoTile" style="width: 400px;">
 <%= form_for @remote_db do |form| %>
     <p>
         <p>
             <%= form.label(:name, "Nickname for new connection") %>
-            <%= form.text_field(:name) %>
-        <br />
+            <%= form.text_field :name, class: 'form-control' %>
         </p>
         <p>
-            <%= form.radio_button(:db_type, @POSTGRES) %>
+            <%= form.radio_button :db_type, @POSTGRES %>
             <%= form.label(:db_postgres, "PostgreSQL") %>
-            <%= form.radio_button(:db_type, @MYSQL) %>
+            <%= form.radio_button :db_type, @MYSQL %>
             <%= form.label(:db_mysql, "MySQL") %>
-            <%= form.radio_button(:db_type, @SQLSERVER) %>
+            <%= form.radio_button :db_type, @SQLSERVER %>
             <%= form.label(:db_sqlserver, "SQL Server") %>
-        <br />
-            <%= form.label(:host, "Host Address") %>
-            <%= form.text_field(:host) %>
-        <br />
-            <%= form.label(:port) %>
-            <%= form.text_field(:port) %>
-        <br />
         </p>
+        <br />
         <p>
+            <%= form.label(:host, "Host Address") %>
+            <%= form.text_field :host, class: 'form-control' %>
+            <%= form.label(:port) %>
+            <%= form.text_field :port, class: 'form-control' %>
             <%= form.label(:database_name, "Database Name") %>
-            <%= form.text_field(:database_name) %>
-        <br />
+            <%= form.text_field :database_name, class: 'form-control' %>
             <%= form.label(:schema) %>
-            <%= form.text_field(:schema) %>
-        <br />
+            <%= form.text_field :schema, class: 'form-control' %>
         </p>
+        <br />
         <p>
             <%= form.label(:remote_user, "Username") %>
-            <%= form.text_field(:remote_user) %>
-        <br />
+            <%= form.text_field :remote_user, class: 'form-control' %>
             <%= form.label(:password) %>
-            <%= form.password_field(:password) %>
+            <%= form.password_field :password, class: 'form-control' %>
             <%= form.hidden_field :join_db_id, value: @join_db_id %>
         </p>
     </p>
     <p>
-        <%= form.submit("Add Connection"), class: "mainButton" %>
+        <%= form.submit("Add Connection", class: "mainButton") %>
     </p>
 <% end %>
+</div>

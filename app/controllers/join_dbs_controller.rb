@@ -4,6 +4,7 @@ class JoinDbsController < ApplicationController
     before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
     before_action :confirm_join_db_password, only: [:update]
     before_action :show_notifications
+    before_action :check_trial_joindb_limit, only: [:new, :create]
 
     # GET /joindb/:id
     def show
@@ -13,12 +14,15 @@ class JoinDbsController < ApplicationController
             session[:join_db_password] = nil
         end
 
+        @page_title = JoinDb.find(params[:id]).name
+
         # Show RemoteDbs
         @remote_dbs = RemoteDb.where(join_db_id: params[:id])
     end
 
     # GET /joindb/new
     def new
+        @page_title = "New JoinDB"
         # Form for getting info to create the new JoinDb
         @user_id = current_user.id
         @join_db = JoinDb.new
@@ -54,7 +58,8 @@ class JoinDbsController < ApplicationController
     end
 
     # UPDATE /join_dbs/:id
-    def edit      
+    def edit 
+        @page_title = "Rename JoinDB"     
     end
 
     def update
@@ -73,6 +78,7 @@ class JoinDbsController < ApplicationController
 
     def confirm_password
         @join_db = JoinDb.find(params[:join_db_id])
+        @page_title = "Confirm Login for \"#{@join_db.name}\""
         begin
             open_connection(@join_db, params[:password])
             session[:join_db_id] = @join_db.id
@@ -97,7 +103,18 @@ class JoinDbsController < ApplicationController
     end
 
     def confirm_join_db_password
-        redirect_to confirm_join_db_password_path(@join_db.id) if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
+        redirect_to confirm_join_db_password_path(@join_db.id) and return if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
+    end
+
+    def check_trial_joindb_limit
+        # Limit trial users to 1 JoinDb
+        if current_user.tier == "trial" and JoinDb.where(user_id: current_user.id).count > 0
+            create_error_notification(
+                current_user.id,
+                "Please upgrade to create more than one JoinDB. Contact us at michael@getjoiner.com to upgrade!"
+            )
+            redirect_to '/' and return
+        end
     end
 end
 

@@ -14,6 +14,8 @@ module AwsFunctions
         )
 
         # Wait a little bit so it's created
+        # TODO: Make this a callback
+        
         sleep(7)
         dns_name = get_join_db_public_dns_name(
             ecs_task_arn: arn,
@@ -32,7 +34,7 @@ module AwsFunctions
         available_subnets = ec2_client.describe_subnets.subnets.map(&:subnet_id)
 
         resp = ecs_client.run_task({
-            cluster: CLUSTER_NAME,
+            cluster: ENV['CLUSTER'] || CLUSTER_NAME,
             task_definition: "joiner-service:1",
             launch_type: "FARGATE",
             network_configuration: {
@@ -50,6 +52,7 @@ module AwsFunctions
 
     def get_network_interface_id(ecs_task_arn, ecs_client)
         task_desc = ecs_client.describe_tasks({
+            cluster: ENV['CLUSTER'] || CLUSTER_NAME,
             tasks: [ecs_task_arn]
         })
 
@@ -80,7 +83,7 @@ module AwsFunctions
 
         ecs_client = Aws::ECS::Client.new()
         ecs_client.stop_task({
-            cluster: CLUSTER_NAME,
+            cluster: ENV['CLUSTER'] || CLUSTER_NAME,
             task: task_arn
         })
     end

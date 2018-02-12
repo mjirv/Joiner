@@ -1,0 +1,5 @@
+Hi <%= @user.name %>,
+
+Thanks for registering for Joiner! To confirm your email address, click the URL below:
+
+<%= confirm_email_user_url(@user.confirm_token) %>

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get '/signup' => 'users#new'
   post '/users' => 'users#create'
   get '/' => 'users#show'
+  get '/confirm_email.:id' => 'users#confirm_email', as: 'confirm_email_user'
 
   # these routes are for showing users a login form, logging them in, and logging them out.
   get '/login' => 'sessions#new'

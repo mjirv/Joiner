@@ -10,7 +10,14 @@ describe RemoteDb do
         @join_db_attributes = FactoryBot.attributes_for(:join_db)
         
         user = User.create!(@user_attributes)
+        user.email_confirmed = true
+        user.tier = "paid"
+        user.save!
+
         wrong_user = User.create!(@wrong_user_attributes)
+        wrong_user.email_confirmed = true
+        wrong_user.tier = "paid"
+        wrong_user.save!
 
         @join_db_attributes[:user_id] = user.id
         @join_db = JoinDb.create!(
@@ -24,7 +31,8 @@ describe RemoteDb do
 
     after(:all) do
         #@join_db.destroy!
-        JoinDb.where("host LIKE '%amazonaws%'").map(&:destroy)
+        #JoinDb.where("host LIKE '%amazonaws%'").map(&:destroy)
+        #JoinDb.destroy_all
     end
 
     before(:each) do 
@@ -93,7 +101,13 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :schema}
             }
-            expect(response).to have_http_status(422)
+            expect(response).to redirect_to join_db_path(@join_db.id)
+
+            # It should create a notification too
+            expect(Notification.where(
+                user_id: @join_db.user_id,
+                status: "enabled"
+            ).count).to eq(1)
         end
 
         it "fails without a hostname" do 
@@ -106,7 +120,13 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :host}
             }
-            expect(response).to have_http_status(422)
+            expect(response).to redirect_to join_db_path(@join_db.id)
+
+            # It should create a notification too
+            expect(Notification.where(
+                user_id: @join_db.user_id,
+                status: "enabled"
+            ).count).to eq(1)
         end
 
         it "fails without a port" do
@@ -119,7 +139,13 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :port}
             }
-            expect(response).to have_http_status(422)
+            expect(response).to redirect_to join_db_path(@join_db.id)
+
+            # It should create a notification too
+            expect(Notification.where(
+                user_id: @join_db.user_id,
+                status: "enabled"
+            ).count).to eq(1)
         end
 
         it "fails without a db type" do 
@@ -132,7 +158,13 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :db_type}
             }
-            expect(response).to have_http_status(422)
+            expect(response).to redirect_to join_db_path(@join_db.id)
+
+            # It should create a notification too
+            expect(Notification.where(
+                user_id: @join_db.user_id,
+                status: "enabled"
+            ).count).to eq(1)
         end
 
         it "fails without a database name" do 
@@ -147,7 +179,13 @@ describe RemoteDb do
                     |k, v| k == :database_name
                 }
             }
-            expect(response).to have_http_status(422)
+            expect(response).to redirect_to join_db_path(@join_db.id)
+
+            # It should create a notification too
+            expect(Notification.where(
+                user_id: @join_db.user_id,
+                status: "enabled"
+            ).count).to eq(1)
         end
 
         it "fails without a remote username" do
@@ -160,7 +198,13 @@ describe RemoteDb do
             post '/remote_dbs', params: {
                 remote_db: @remote_db_attributes.reject{|k, v| k == :remote_user}
             }
-            expect(response).to have_http_status(422)
+            expect(response).to redirect_to join_db_path(@join_db.id)
+
+            # It should create a notification too
+            expect(Notification.where(
+                user_id: @join_db.user_id,
+                status: "enabled"
+            ).count).to eq(1)
         end
 
         it "exists with the right fields on successful creation" do
