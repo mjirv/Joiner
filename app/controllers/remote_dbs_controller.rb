@@ -19,6 +19,7 @@ class RemoteDbsController < ApplicationController
     end
 
     def new
+        @page_title = "Add Connection"
         #authorize_owner(params[:join_db])
         # DB type constants
         @POSTGRES = "postgres"

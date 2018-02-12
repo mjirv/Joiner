@@ -3,6 +3,7 @@
 class SessionsController < ApplicationController
     
     def new
+        @page_title = "Log In"
     end
 
     def create

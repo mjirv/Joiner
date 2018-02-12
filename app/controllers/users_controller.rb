@@ -5,6 +5,7 @@ class UsersController < ApplicationController
     before_action :show_notifications, only: [:show]
 
     def new
+        @page_title = "Sign Up"
     end
 
     def create
@@ -23,6 +24,7 @@ class UsersController < ApplicationController
     end
 
     def show
+        @page_title = "Your JoinDBs"
         @join_dbs = JoinDb.where(user_id: session[:user_id])
     end
 

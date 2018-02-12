@@ -14,12 +14,15 @@ class JoinDbsController < ApplicationController
             session[:join_db_password] = nil
         end
 
+        @page_title = JoinDb.find(params[:id]).name
+
         # Show RemoteDbs
         @remote_dbs = RemoteDb.where(join_db_id: params[:id])
     end
 
     # GET /joindb/new
     def new
+        @page_title = "New JoinDB"
         # Form for getting info to create the new JoinDb
         @user_id = current_user.id
         @join_db = JoinDb.new
@@ -55,7 +58,8 @@ class JoinDbsController < ApplicationController
     end
 
     # UPDATE /join_dbs/:id
-    def edit      
+    def edit 
+        @page_title = "Rename JoinDB"     
     end
 
     def update
@@ -74,6 +78,7 @@ class JoinDbsController < ApplicationController
 
     def confirm_password
         @join_db = JoinDb.find(params[:join_db_id])
+        @page_title = "Confirm Login for \"#{@join_db.name}\""
         begin
             open_connection(@join_db, params[:password])
             session[:join_db_id] = @join_db.id
