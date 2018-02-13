@@ -65,10 +65,9 @@ describe JoinDb do
             post "/join_dbs", params: {join_db: @join_db_attributes}
             expect(response).to have_http_status(302)
 
-            sleep(90)
+            sleep(15)
 
             join_db = JoinDb.where(name: @join_db_attributes[:name]).last
-            join_db.reload
             expect(join_db.host).not_to be_nil
             expect(join_db.port).not_to be_nil
             expect(join_db.task_arn).not_to be_nil
@@ -105,10 +104,12 @@ describe JoinDb do
 
     describe "Deleting a JoinDb", type: :request do
         it "deletes the JoinDB if you're the right user" do
+            initial_count = JoinDb.where(user_id: @user.id).count
+
             post '/login', params: @user_attributes
             get delete_join_db_url(@join_db.id)
             expect(response).to redirect_to('/')
-            expect(JoinDb.where(user_id: @user.id).count).to eq(0)
+            expect(JoinDb.where(user_id: @user.id).count).to eq(initial_count - 1)
         end
 
         it "fails if you're not logged in" do
