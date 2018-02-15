@@ -90,24 +90,26 @@ describe RemoteDb do
             expect(response).to redirect_to confirm_join_db_password_url(@join_db.id)
         end
 
-        it "fails if postgres and you don't include a schema" do
-            @remote_db_attributes[:db_type] = "postgres"
-            post '/login', params: @user_attributes
-            post '/confirm_join_db_password', 
-                params: {
-                    join_db_id: @join_db.id,
-                    password: @join_db_attributes[:password]
+        ["postgres", "redshift"].each do |needs_schema_type|
+            it "fails if #{needs_schema_type} and you don't include a schema" do
+                @remote_db_attributes[:db_type] = needs_schema_type
+                post '/login', params: @user_attributes
+                post '/confirm_join_db_password', 
+                    params: {
+                        join_db_id: @join_db.id,
+                        password: @join_db_attributes[:password]
+                    }
+                post '/remote_dbs', params: {
+                    remote_db: @remote_db_attributes.reject{|k, v| k == :schema}
                 }
-            post '/remote_dbs', params: {
-                remote_db: @remote_db_attributes.reject{|k, v| k == :schema}
-            }
-            expect(response).to redirect_to join_db_path(@join_db.id)
+                expect(response).to redirect_to join_db_path(@join_db.id)
 
-            # It should create a notification too
-            expect(Notification.where(
-                user_id: @join_db.user_id,
-                status: "enabled"
-            ).count).to eq(1)
+                # It should create a notification too
+                expect(Notification.where(
+                    user_id: @join_db.user_id,
+                    status: "enabled"
+                ).count).to eq(1)
+            end
         end
 
         it "fails without a hostname" do 
