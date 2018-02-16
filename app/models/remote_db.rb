@@ -7,10 +7,7 @@ class RemoteDb < ApplicationRecord
   validates :remote_user, presence: true
   validates :port, presence: true
   validates :host, presence: true
-  validates :schema, presence: true, if: needs_schema?
+  validates :schema, presence: true, 
+    if: -> record { record.postgres? or record.redshift? }
 
-  private
-  def needs_schema?
-    self.postgres? or self.redshift?
-  end
 end
