@@ -43,9 +43,9 @@ module JoindbApi
     # TODO: There's gotta be a better way of doing this
     def refresh_fdw(join_db, remote_db, password)
         conn = open_connection(join_db, password)
-        schema_name = remote_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
-        remote_schema = remote_db.postgres? ? "#{remote_db.schema}" : "#{remote_db.database_name}"
-        options = remote_db.postgres? ? "" : "OPTIONS (
+        schema_name = (remote_db.postgres? or remote_db.redshift?) ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
+        remote_schema = (remote_db.postgres? or remote_db.redshift?) ? "#{remote_db.schema}" : "#{remote_db.database_name}"
+        options = (remote_db.postgres? or remote_db.redshift?) ? "" : "OPTIONS (
             odbc_DATABASE '#{schema_name}'
         )"
 
@@ -64,7 +64,7 @@ module JoindbApi
         conn = open_connection(join_db, password)
         
         # TODO: Change this once we have more than just Postgres and MySQL
-        schema_name = remote_db.postgres? ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
+        schema_name = (remote_db.postgres? or remote_db.redshift?) ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
 
         conn.exec("DROP SERVER IF EXISTS #{schema_name} CASCADE")
         conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
