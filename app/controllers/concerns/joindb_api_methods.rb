@@ -49,37 +49,34 @@ module JoindbApiMethods
         remotehost = dockerize_localhost(remote_host)
         conn = open_connection(db_name, db_host, username, password, port)    
         schema_name = "#{remote_db_name}_#{remote_schema}"
-        begin
-            conn.transaction do |c| 
-                # Create the server
-                c.exec("CREATE SERVER #{schema_name}
-                    FOREIGN DATA WRAPPER odbc_fdw
-                    OPTIONS (
-                        odbc_DRIVER 'PostgreSQL',
-                        odbc_SERVERNAME '#{remote_host}',
-                        odbc_PORT '#{remote_port}'
-                    )")
-                
-                # Create the user mapping
-                c.exec("CREATE USER MAPPING FOR \"#{username}\"
-                    SERVER #{schema_name}
-                    OPTIONS (
-                        odbc_USERNAME '#{remote_user}',
-                        odbc_PASSWORD '#{remote_pass}'
-                    )")
-                
-                # Import the schema
-                c.exec("CREATE SCHEMA #{schema_name}")
-                c.exec("IMPORT FOREIGN SCHEMA #{remote_schema}
-                    FROM SERVER #{schema_name}
-                    INTO #{schema_name}
-                    OPTIONS (
-                        odbc_DATABASE '#{remote_db_name}'
-                    )")
-            end
-        rescue StandardError
-            $stderr.print "Error: #{$!}"
+        conn.transaction do |c| 
+            # Create the server
+            c.exec("CREATE SERVER #{schema_name}
+                FOREIGN DATA WRAPPER odbc_fdw
+                OPTIONS (
+                    odbc_DRIVER 'PostgreSQL',
+                    odbc_SERVERNAME '#{remote_host}',
+                    odbc_PORT '#{remote_port}'
+                )")
+            
+            # Create the user mapping
+            c.exec("CREATE USER MAPPING FOR \"#{username}\"
+                SERVER #{schema_name}
+                OPTIONS (
+                    odbc_USERNAME '#{remote_user}',
+                    odbc_PASSWORD '#{remote_pass}'
+                )")
+            
+            # Import the schema
+            c.exec("CREATE SCHEMA #{schema_name}")
+            c.exec("IMPORT FOREIGN SCHEMA #{remote_schema}
+                FROM SERVER #{schema_name}
+                INTO #{schema_name}
+                OPTIONS (
+                    odbc_DATABASE '#{remote_db_name}'
+                )")
         end
+        conn.close()
     end
 
     # Adds a MySQL FDW or a SQL Server FDW depending on whether drivertype is
@@ -90,36 +87,32 @@ module JoindbApiMethods
         remotehost = dockerize_localhost(remote_host)
         conn = open_connection(db_name, db_host, username, password, port)
         schema_name = "#{remote_db_name}"
-        begin
-            conn.transaction do |conn| 
-                # Create the server
-                conn.exec("CREATE SERVER #{schema_name}
-                    FOREIGN DATA WRAPPER odbc_fdw
-                    OPTIONS (
-                        odbc_DRIVER '#{driver_type}',
-                        odbc_SERVER '#{remote_host}', 
-                        odbc_PORT '#{remote_port}'
-                    )")
-                
-                # Create the user mapping
-                conn.exec("CREATE USER MAPPING FOR \"#{username}\"
-                    SERVER #{schema_name}
-                    OPTIONS (
-                        odbc_UID '#{remote_user}',
-                        odbc_PWD '#{remote_pass}'
-                    )")
-                
-                # Import the schema
-                conn.exec("CREATE SCHEMA #{schema_name}")
-                conn.exec("IMPORT FOREIGN SCHEMA #{schema_name}
-                    FROM SERVER #{schema_name}
-                    INTO #{schema_name}
-                    OPTIONS (
-                        odbc_DATABASE '#{schema_name}'
-                    )")
-            end
-        rescue StandardError
-            $stderr.print "Error: #{$!}"
+        conn.transaction do |conn| 
+            # Create the server
+            conn.exec("CREATE SERVER #{schema_name}
+                FOREIGN DATA WRAPPER odbc_fdw
+                OPTIONS (
+                    odbc_DRIVER '#{driver_type}',
+                    odbc_SERVER '#{remote_host}', 
+                    odbc_PORT '#{remote_port}'
+                )")
+            
+            # Create the user mapping
+            conn.exec("CREATE USER MAPPING FOR \"#{username}\"
+                SERVER #{schema_name}
+                OPTIONS (
+                    odbc_UID '#{remote_user}',
+                    odbc_PWD '#{remote_pass}'
+                )")
+            
+            # Import the schema
+            conn.exec("CREATE SCHEMA #{schema_name}")
+            conn.exec("IMPORT FOREIGN SCHEMA #{schema_name}
+                FROM SERVER #{schema_name}
+                INTO #{schema_name}
+                OPTIONS (
+                    odbc_DATABASE '#{schema_name}'
+                )")
         end
         conn.close()
     end
