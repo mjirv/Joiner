@@ -14,6 +14,8 @@
             <%= form.label(:db_mysql, "MySQL") %>
             <%= form.radio_button :db_type, @SQLSERVER %>
             <%= form.label(:db_sqlserver, "SQL Server") %>
+            <%= form.radio_button :db_type, @REDSHIFT %>
+            <%= form.label(:db_redshift, "Redshift") %>
         </p>
         <br />
         <p>
