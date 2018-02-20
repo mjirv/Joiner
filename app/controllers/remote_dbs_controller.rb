@@ -36,16 +36,27 @@ class RemoteDbsController < ApplicationController
     end
 
     def create
-        remote_db_params[:db_type] = remote_db_params[:db_type].to_i
-        # Creates a new RemoteDb
-        confirm_join_db_password(remote_db_params[:join_db_id].to_i)
+        rdb_params = remote_db_params
 
-        @remote_db = RemoteDb.create(remote_db_params.reject{|k, v| k.include? "password" })
+        # I might need this for tests to pass... probably best to fix the tests
+        # rdb_params[:db_type] = remote_db_params[:db_type].to_i
+
+        # Creates a new RemoteDb
+        confirm_join_db_password(rdb_params[:join_db_id].to_i)
+
+        if rdb_params[:csv]
+            rdb_params[:name] = rdb_params[:csv].original_filename
+            rdb_params[:host] = rdb_params[:csv]
+        end
+
+        @remote_db = RemoteDb.create(rdb_params.reject{|k, v| k.include? "password" or k.include? "csv" })
+
+        # Otherwise we're adding a database
 
         # Make sure we can actually create the FDW downstream       
         if @remote_db.save
-            if create_remote_db(@remote_db, remote_db_params[:password], session[:join_db_password]) 
-                redirect_to join_db_path(remote_db_params[:join_db_id]) and return
+            if create_remote_db(@remote_db, rdb_params[:password], session[:join_db_password]) 
+                redirect_to join_db_path(rdb_params[:join_db_id]) and return
             else
                 @remote_db.destroy
                 render :json => { :errors => remote_db.errors.full_messages }, :status => 422 and return
@@ -110,11 +121,15 @@ class RemoteDbsController < ApplicationController
 
     private
     def remote_db_params
-        params.require(:remote_db).permit(:name, :db_type, :host, :port, :database_name, :schema, :remote_user, :password, :join_db_id)
+        params.require(:remote_db).permit(:name, :db_type, :host, :port, :database_name, :schema, :remote_user, :password, :join_db_id, :csv)
     end
 
     def set_remote_db
         @remote_db = RemoteDb.find(params[:id])
+    end
+
+    def create_csv
+        puts remote_db_params[:csv]
     end
 
     def create_remote_db(remote_db, remote_password, password)
@@ -129,6 +144,8 @@ class RemoteDbsController < ApplicationController
                 add_fdw_sql_server(join_db, remote_db, remote_password, password)
             elsif remote_db.redshift?
                 add_fdw_postgres(join_db, remote_db, remote_password, password)
+            elsif remote_db.csv?
+                add_csv(join_db, remote_db, password)
             else
                 return false
             end

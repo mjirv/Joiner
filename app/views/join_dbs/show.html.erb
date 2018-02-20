@@ -5,7 +5,14 @@
 
 <h3>Connections</h3>
 <p>
-    <%= link_to 'Add Connection', remote_dbs_new_path(join_db: @join_db.id) %>
+    <%= link_to 'Add Database', remote_dbs_new_path(join_db: @join_db.id) %>
+    <%= form_for @new_rdb do |f| %>
+        <%= f.label :add_csv, 'Add CSV' %>
+        <%= f.file_field :csv %>
+        <%= f.hidden_field :db_type, value: "csv" %>
+        <%= f.hidden_field :join_db_id, value: @join_db.id %>
+        <%= f.submit 'Add CSV' %>
+    <% end %>
 </p>
 <% @remote_dbs.each do |rdb| %>
     <div class="infoTile">
