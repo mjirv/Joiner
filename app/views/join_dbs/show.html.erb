@@ -8,7 +8,7 @@
     <%= link_to 'Add Database', remote_dbs_new_path(join_db: @join_db.id) %>
     <%= form_for @new_rdb do |f| %>
         <%= f.label :add_csv, 'Add CSV' %>
-        <%= f.file_field :csv %>
+        <%= f.file_field :csv, accept: 'text/csv' %>
         <%= f.hidden_field :db_type, value: "csv" %>
         <%= f.hidden_field :join_db_id, value: @join_db.id %>
         <%= f.submit 'Add CSV' %>

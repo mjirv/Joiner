@@ -46,7 +46,7 @@ class RemoteDbsController < ApplicationController
 
         if rdb_params[:csv]
             rdb_params[:name] = rdb_params[:csv].original_filename
-            rdb_params[:host] = rdb_params[:csv]
+            rdb_params[:host] = rdb_params[:csv].tempfile
         end
 
         @remote_db = RemoteDb.create(rdb_params.reject{|k, v| k.include? "password" or k.include? "csv" })

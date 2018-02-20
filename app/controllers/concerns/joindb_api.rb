@@ -94,4 +94,18 @@ module JoindbApi
         JoinDBApiMethods.add_fdw_other(username: join_db.username, password: password, db_name: DB_NAME, db_host: join_db.host, port: join_db.port, remote_user: remote_db.remote_user, remote_pass: remote_password, remote_host: remote_db.host, remote_db_name: remote_db.database_name, remote_port: remote_db.port, driver_type: "SQL Server")
     end
 
+    def add_csv(join_db, remote_db, password)
+        # Get the file on the remote server
+        copy_file_to_remote(join_db, remote_db.host)
+
+        # Add it as a table using pgfutter
+        JoinDBApiMethods.add_csv(
+            files: [remote_db.host],
+            username: join_db.username,
+            password: password,
+            db_name: DB_NAME,
+            db_host: join_db.host
+        )
+    end
+
 end
