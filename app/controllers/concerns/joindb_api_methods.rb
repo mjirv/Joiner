@@ -118,7 +118,19 @@ module JoindbApiMethods
     end
 
     # Adds a CSV
-    def add_csv(files:, username:, password:, db_name:, port:)
+    def add_csv(files:, username:, password:, db_name:, port:, db_host: 'localhost')
+        if db_host != 'localhost'
+            return add_remote_csv(
+                files: files,
+                username: username,
+                password: password,
+                db_name: db_name,
+                port: port,
+                db_host: db_host
+            )
+        end
+
+        # Otherwise it's local
         files.each do |file|
             file = file.gsub("\n","")
             puts ""
@@ -182,5 +194,12 @@ module JoindbApiMethods
         conn.send_query("SELECT ftoptions FROM pg_foreign_table")
         conn.get_result
         conn.close()
+    end
+
+    private
+    def add_remote_csv(files:, username:, password:, db_name:, port:, db_host:)
+        # It's already been SCP'd
+        # 1. SSH into the host and cp it to docker
+        # 2. SSH into host and use pgfutter
     end
 end

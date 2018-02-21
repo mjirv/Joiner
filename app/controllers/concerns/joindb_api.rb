@@ -96,16 +96,24 @@ module JoindbApi
 
     def add_csv(join_db, remote_db, password)
         # Get the file on the remote server
-        copy_file_to_remote(join_db, remote_db.host)
+        remote_path = copy_file_to_remote(join_db, remote_db.host, remote_db.name)
 
         # Add it as a table using pgfutter
         JoinDBApiMethods.add_csv(
-            files: [remote_db.host],
+            files: [remote_path],
             username: join_db.username,
             password: password,
             db_name: DB_NAME,
-            db_host: join_db.host
+            db_host: join_db.host,
+            port: join_db.port
         )
     end
 
+    private
+    def copy_file_to_remote(join_db, filepath, filename)
+        # TODO: I probably want to sanitize these in some way
+        `scp #{filepath} #{join_db.host}:/usr/local/#{filename}`
+
+        return "/usr/local/#{filename}"
+    end
 end
