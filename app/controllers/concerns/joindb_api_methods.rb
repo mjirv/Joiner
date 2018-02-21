@@ -199,13 +199,14 @@ module JoindbApiMethods
     private
     def add_remote_csv(files:, username:, password:, db_name:, port:, db_host:)
         files.each do |file|
-            # It's already been SCP'd, so:
-            # 1. SSH into the host and cp it to docker
-            # 2. SSH into host and use pgfutter
-            `ssh #{db_host} 'docker cp #{file} #{CONTAINER_NAME}:#{FILE_DIRECTORY}' && \
-            docker exec -it #{CONTAINER_NAME} ./pgfutter \
-            --user #{username} --pw #{password} --db \
-            #{db_name} --ignore-errors csv #{FILE_DIRECTORY}/#{file}'`
+            file = file.gsub("\n","")
+
+            # pgfutter it to the database
+            puts `pgfutter \
+                --user #{username} --pw #{password} \
+                --host #{db_host} --port #{port} \
+                --db #{db_name} --ignore-errors 
+                csv #{FILE_DIRECTORY}/#{file}`
         end
     end
 end

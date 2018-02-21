@@ -45,8 +45,13 @@ class RemoteDbsController < ApplicationController
         confirm_join_db_password(rdb_params[:join_db_id].to_i)
 
         if rdb_params[:csv]
-            rdb_params[:name] = rdb_params[:csv].original_filename
-            rdb_params[:host] = rdb_params[:csv].tempfile
+            uploaded_file = rdb_params[:csv]
+            File.open(Rails.root.join('public', 'uploads', uploaded_file.original_filename), 'wb') do |file|
+                file.write(uploaded_file.read)
+            end
+
+            rdb_params[:name] = uploaded_file.original_filename
+            rdb_params[:host] = Rails.root.join('public', 'uploads', uploaded_file.original_filename)
         end
 
         @remote_db = RemoteDb.create(rdb_params.reject{|k, v| k.include? "password" or k.include? "csv" })
@@ -128,10 +133,6 @@ class RemoteDbsController < ApplicationController
         @remote_db = RemoteDb.find(params[:id])
     end
 
-    def create_csv
-        puts remote_db_params[:csv]
-    end
-
     def create_remote_db(remote_db, remote_password, password)
         # Calls the API to add a FDW to the JoinDB
         join_db = remote_db.join_db
@@ -170,4 +171,3 @@ class RemoteDbsController < ApplicationController
         redirect_to confirm_join_db_password_path(join_db_id) and return if not (session[:join_db_password] and session[:join_db_id].to_i == join_db_id)
     end
 end
-
