@@ -234,6 +234,12 @@ describe RemoteDb do
         end
     end
 
+    describe "CSV RemoteDbs", type: :request do
+        it "creates the RemoteDb if it's a valid CSV"
+        it "fails if it's not a CSV"
+        it "deletes the CSV if you're logged in and the right user"
+    end
+
     describe "Deleting a RemoteDb", type: :request do
         it "deletes the RemoteDb if you're logged in and the right user" do
             @remote_db_attributes = {
