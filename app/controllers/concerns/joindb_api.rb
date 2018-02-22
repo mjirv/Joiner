@@ -97,7 +97,7 @@ module JoindbApi
     def add_csv(join_db, remote_db, password)
         # Add it as a table using pgfutter
         JoinDBApiMethods.add_csv(
-            files: [remote_db.host],
+            files: [remote_db.filepath],
             username: join_db.username,
             password: password,
             db_name: DB_NAME,

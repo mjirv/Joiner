@@ -202,7 +202,7 @@ module JoindbApiMethods
             file = file.gsub("\n","")
 
             # pgfutter it to the database
-            puts `#{ENV['PGFUTTER'] || 'pgfutter'} \
+            `#{ENV['PGFUTTER'] || 'pgfutter'} \
                 --user #{username} --pw #{password} \
                 --host #{db_host} --port #{port} \
                 --db #{db_name} --ignore-errors \

@@ -51,7 +51,12 @@ class RemoteDbsController < ApplicationController
             end
 
             rdb_params[:name] = uploaded_file.original_filename
-            rdb_params[:host] = Rails.root.join('public', 'uploads', uploaded_file.original_filename)
+            rdb_params[:filepath] = Rails.root.join(
+                'public', 'uploads', uploaded_file.original_filename
+            )
+
+            # Default pgfutter schema; change if we stop using the default
+            rdb_params[:schema] = 'import'
         end
 
         @remote_db = RemoteDb.create(rdb_params.reject{|k, v| k.include? "password" or k.include? "csv" })
