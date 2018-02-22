@@ -63,11 +63,19 @@ module JoindbApi
     def delete_fdw(join_db, remote_db, password)
         conn = open_connection(join_db, password)
         
-        # TODO: Change this once we have more than just Postgres and MySQL
+        # Change if other db types have different schema names in future
         schema_name = (remote_db.postgres? or remote_db.redshift?) ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
 
-        conn.exec("DROP SERVER IF EXISTS #{schema_name} CASCADE")
-        conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
+        if schema_name
+            conn.exec("DROP SERVER IF EXISTS #{schema_name} CASCADE")
+            conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
+        end
+        conn.close()
+    end
+
+    def delete_csv(join_db, remote_db, password)
+        conn = open_connection(join_db, password)
+        conn.exec("DROP TABLE import.#{remote_db.table_name}")
         conn.close()
     end
 

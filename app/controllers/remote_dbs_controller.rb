@@ -46,6 +46,16 @@ class RemoteDbsController < ApplicationController
 
         if rdb_params[:csv]
             uploaded_file = rdb_params[:csv]
+
+            # Validate that it's a CSV
+            if uploaded_file.content_type != 'text/csv'
+                create_error_notification(
+                    current_user.id,
+                    "Error creating your Connection. Error was: Not a CSV file."
+                )
+                redirect_to join_db_path(rdb_params[:join_db_id]) and return
+            end
+
             File.open(Rails.root.join('public', 'uploads', uploaded_file.original_filename), 'wb') do |file|
                 file.write(uploaded_file.read)
             end
@@ -97,6 +107,15 @@ class RemoteDbsController < ApplicationController
     def refresh
         # Get the needed RemoteDb
         remote_db = RemoteDb.find(params[:id])
+
+        if remote_db.csv?
+            handle_error(
+                remote_db,
+                "Error: Cannot refresh a CSV file. Please delete and re-add \
+                to update."
+            )
+            return
+        end
     
         # Confirm the user can edit/get their password
         confirm_join_db_password(remote_db.join_db_id)
@@ -117,8 +136,17 @@ class RemoteDbsController < ApplicationController
     def destroy
         join_db_id = @remote_db.join_db_id
         begin
-            delete_fdw(@remote_db.join_db, @remote_db, session[:join_db_password])
-            @remote_db.destroy
+            if @remote_db.csv?
+                delete_csv(
+                    @remote_db.join_db, @remote_db, session[:join_db_password]
+                )
+                @remote_db.destroy
+            else
+                delete_fdw(
+                    @remote_db.join_db, @remote_db, session[:join_db_password]
+                )
+                @remote_db.destroy
+            end
             redirect_to join_db_path(join_db_id)
         rescue
             handle_error(
@@ -151,7 +179,13 @@ class RemoteDbsController < ApplicationController
             elsif remote_db.redshift?
                 add_fdw_postgres(join_db, remote_db, remote_password, password)
             elsif remote_db.csv?
-                add_csv(join_db, remote_db, password)
+                table_name = add_csv(join_db, remote_db, password)
+                if table_name
+                    remote_db.table_name = table_name
+                    remote_db.save
+                else
+                    raise "Could not add CSV."
+                end
             else
                 return false
             end

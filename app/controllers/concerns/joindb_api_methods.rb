@@ -198,15 +198,22 @@ module JoindbApiMethods
 
     private
     def add_remote_csv(files:, username:, password:, db_name:, port:, db_host:)
+        table_name = nil
+
+        # TODO: Should change this, we're not actually expecting multiple files
         files.each do |file|
             file = file.gsub("\n","")
 
             # pgfutter it to the database
-            `#{ENV['PGFUTTER'] || 'pgfutter'} \
+            response = `#{ENV['PGFUTTER'] || 'pgfutter'} \
                 --user #{username} --pw #{password} \
                 --host #{db_host} --port #{port} \
                 --db #{db_name} --ignore-errors \
                 csv #{file}`
+            
+            # Get and return the table name
+            table_name = /import\.(.*?)\n/.match(response)[1]
         end
+        return table_name
     end
 end
