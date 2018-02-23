@@ -240,7 +240,7 @@ describe RemoteDb do
     describe "CSV RemoteDbs", type: :request do
         it "creates the RemoteDb if it's a valid CSV" do 
             file = fixture_file_upload(
-                Rails.root.join('public', 'test', TESTFILE),
+                Rails.root.join('public', 'uploads', TESTFILE),
                 'text/csv'
             )
 
@@ -271,7 +271,7 @@ describe RemoteDb do
         
         it "fails if it's not a CSV" do 
             file = fixture_file_upload(
-                Rails.root.join('public', 'test', BAD_TESTFILE),
+                Rails.root.join('public', 'uploads', BAD_TESTFILE),
                 'text/plain'
             )
 
@@ -317,7 +317,7 @@ describe RemoteDb do
             expect(response).to redirect_to join_db_url(@join_db.id)
             expect(RemoteDb.where(
                 join_db_id: @join_db.id, 
-                db_type: 'csv'
+                db_type: RemoteDb.db_types[:csv]
             ).count).to eq(0)
         end
     end
