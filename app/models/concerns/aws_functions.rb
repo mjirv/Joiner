@@ -16,7 +16,7 @@ module AwsFunctions
         # Wait a little bit so it's created
         # TODO: Make this a callback
         
-        sleep(7)
+        sleep(10)
         dns_name = get_join_db_public_dns_name(
             ecs_task_arn: arn,
             ecs_client: ecs_client,
