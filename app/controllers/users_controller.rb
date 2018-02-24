@@ -12,7 +12,7 @@ class UsersController < ApplicationController
         user = User.new(user_params)
 
         # Temporary code to limit the number of beta users
-        if User.count >= 0
+        if User.count >= 50
             limit_beta(user)
             flash[:success] = "Thanks for signing up! Our closed beta is full right now, but we've added you to the wait list and will let you know as soon as a spot opens up. Please contact michael@getjoiner.com with any questions!"
             redirect_to '/login'
@@ -56,8 +56,8 @@ class UsersController < ApplicationController
     end
 
     def limit_beta(user)
-        #Concurrent::Future.execute{ 
-        ApplicationMailer.beta_signup(user).deliver
-        #}
+        Concurrent::Future.execute{ 
+            ApplicationMailer.beta_signup(user).deliver
+        }
     end
 end
