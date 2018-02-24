@@ -35,6 +35,7 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = { 
     :address              => "smtp-relay.gmail.com",  
     :port                 => 587,  
+    :domain               => "getjoiner.com",
     :user_name            => "michael@getjoiner.com", 
     :password             => ENV['MAIL_PASSWORD'],  
     :authentication       => "plain",
