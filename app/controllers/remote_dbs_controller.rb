@@ -58,11 +58,11 @@ class RemoteDbsController < ApplicationController
 
             # Create the user's subfolder if it doesn't already exist
             folder = Rails.root.join('public', 'uploads', "#{current_user.id}")
-            `mkdir -p #{folder}`
-            filepath = Rails.root.join('public', 'uploads', "#{current_user.id}", uploaded_file.original_filename
+            Dir.mkdir(folder) unless File.directory?(folder)
+            filepath = Rails.root.join('public', 'uploads', "#{current_user.id}", uploaded_file.original_filename)
 
-            File.open(filepath), 'wb') do |file|
-                file.write(uploaded_file.read)
+            File.open(filepath, 'wb') do |file|
+                file.write(uploaded_file.read.delete("\u0000"))
             end
 
             rdb_params[:name] = uploaded_file.original_filename
