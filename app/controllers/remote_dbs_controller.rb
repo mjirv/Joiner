@@ -56,14 +56,17 @@ class RemoteDbsController < ApplicationController
                 redirect_to join_db_path(rdb_params[:join_db_id]) and return
             end
 
-            File.open(Rails.root.join('public', 'uploads', uploaded_file.original_filename), 'wb') do |file|
+            # Create the user's subfolder if it doesn't already exist
+            folder = Rails.root.join('public', 'uploads', "#{current_user.id}")
+            `mkdir -p #{folder}`
+            filepath = Rails.root.join('public', 'uploads', "#{current_user.id}", uploaded_file.original_filename
+
+            File.open(filepath), 'wb') do |file|
                 file.write(uploaded_file.read)
             end
 
             rdb_params[:name] = uploaded_file.original_filename
-            rdb_params[:filepath] = Rails.root.join(
-                'public', 'uploads', uploaded_file.original_filename
-            )
+            rdb_params[:filepath] = filepath
 
             # Default pgfutter schema; change if we stop using the default
             rdb_params[:schema] = 'import'
@@ -182,6 +185,7 @@ class RemoteDbsController < ApplicationController
                 table_name = add_csv(join_db, remote_db, password)
                 if table_name
                     remote_db.table_name = table_name
+                    `rm #{remote_db.filepath}`
                     remote_db.save
                 else
                     raise "Could not add CSV."
