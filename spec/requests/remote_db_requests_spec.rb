@@ -303,7 +303,7 @@ describe RemoteDb do
         it "deletes the CSV if you're logged in and the right user" do 
             csv_id = RemoteDb.where(
                 join_db_id: @join_db.id, 
-                db_type: 'csv'
+                db_type: RemoteDb.db_types[:csv]
             ).last.id
 
             post '/login', params: @user_attributes
