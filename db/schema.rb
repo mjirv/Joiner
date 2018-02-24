@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180211062944) do
+ActiveRecord::Schema.define(version: 20180222062748) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "join_dbs", force: :cascade do |t|
     t.string   "name"
@@ -21,7 +24,7 @@ ActiveRecord::Schema.define(version: 20180211062944) do
     t.datetime "updated_at", null: false
     t.string   "username"
     t.string   "task_arn"
-    t.index ["user_id"], name: "index_join_dbs_on_user_id"
+    t.index ["user_id"], name: "index_join_dbs_on_user_id", using: :btree
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -31,7 +34,7 @@ ActiveRecord::Schema.define(version: 20180211062944) do
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.integer  "status"
-    t.index ["user_id"], name: "index_notifications_on_user_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id", using: :btree
   end
 
   create_table "remote_dbs", force: :cascade do |t|
@@ -45,7 +48,9 @@ ActiveRecord::Schema.define(version: 20180211062944) do
     t.string   "database_name"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.index ["join_db_id"], name: "index_remote_dbs_on_join_db_id"
+    t.string   "filepath"
+    t.string   "table_name"
+    t.index ["join_db_id"], name: "index_remote_dbs_on_join_db_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|

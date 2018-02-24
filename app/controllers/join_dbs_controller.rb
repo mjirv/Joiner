@@ -18,6 +18,7 @@ class JoinDbsController < ApplicationController
 
         # Show RemoteDbs
         @remote_dbs = RemoteDb.where(join_db_id: params[:id])
+        @new_rdb = RemoteDb.new
     end
 
     # GET /joindb/new

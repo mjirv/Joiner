@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+TESTFILE = "test_good.csv"
+BAD_TESTFILE = "test_bad.csv"
+
 #FactoryBot.find_definitions
 
 describe RemoteDb do
@@ -231,6 +234,91 @@ describe RemoteDb do
             expect(response).to redirect_to join_db_url(@join_db.id)
             remote_db = @join_db.remote_dbs.last
             expect(remote_db.host).to eq(@remote_db_attributes[:host])
+        end
+    end
+
+    describe "CSV RemoteDbs", type: :request do
+        it "creates the RemoteDb if it's a valid CSV" do 
+            file = fixture_file_upload(
+                Rails.root.join('public', 'uploads', TESTFILE),
+                'text/csv'
+            )
+
+            @csv_remote_db_attributes = {
+                csv: file,
+                join_db_id: @join_db.id,
+                db_type: "csv"
+            }
+
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @csv_remote_db_attributes
+            }
+
+            expect(response).to redirect_to join_db_url(@join_db.id)
+            remote_db = @join_db.remote_dbs.last
+
+            puts(Notification.last.message)
+
+            # Change this if we stop using the default pgfutter schema
+            expect(remote_db.schema).to eq('import')
+        end
+        
+        it "fails if it's not a CSV" do 
+            file = fixture_file_upload(
+                Rails.root.join('public', 'uploads', BAD_TESTFILE),
+                'text/plain'
+            )
+
+            @csv_remote_db_attributes = {
+                csv: file,
+                join_db_id: @join_db.id,
+                db_type: "csv"
+            }
+
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+            post '/remote_dbs', params: {
+                remote_db: @csv_remote_db_attributes
+            }
+
+            expect(response).to redirect_to join_db_path(@join_db.id)
+
+            # It should create a notification too
+            expect(Notification.where(
+                user_id: @join_db.user_id,
+                status: "enabled"
+            ).count).to eq(1)
+        end
+
+        it "deletes the CSV if you're logged in and the right user" do 
+            csv_id = RemoteDb.where(
+                join_db_id: @join_db.id, 
+                db_type: RemoteDb.db_types[:csv]
+            ).last.id
+
+            post '/login', params: @user_attributes
+            post '/confirm_join_db_password', 
+                params: {
+                    join_db_id: @join_db.id,
+                    password: @join_db_attributes[:password]
+                }
+
+            get delete_remote_db_url(csv_id)
+            expect(response).to redirect_to join_db_url(@join_db.id)
+            expect(RemoteDb.where(
+                join_db_id: @join_db.id, 
+                db_type: RemoteDb.db_types[:csv]
+            ).count).to eq(0)
         end
     end
 

@@ -118,7 +118,19 @@ module JoindbApiMethods
     end
 
     # Adds a CSV
-    def add_csv(files:, username:, password:, db_name:, port:)
+    def add_csv(files:, username:, password:, db_name:, port:, db_host: 'localhost')
+        if db_host != 'localhost'
+            return add_remote_csv(
+                files: files,
+                username: username,
+                password: password,
+                db_name: db_name,
+                port: port,
+                db_host: db_host
+            )
+        end
+
+        # Otherwise it's local
         files.each do |file|
             file = file.gsub("\n","")
             puts ""
@@ -182,5 +194,26 @@ module JoindbApiMethods
         conn.send_query("SELECT ftoptions FROM pg_foreign_table")
         conn.get_result
         conn.close()
+    end
+
+    private
+    def add_remote_csv(files:, username:, password:, db_name:, port:, db_host:)
+        table_name = nil
+
+        # TODO: Should change this, we're not actually expecting multiple files
+        files.each do |file|
+            file = file.gsub("\n","")
+
+            # pgfutter it to the database
+            response = `#{ENV['PGFUTTER'] || 'pgfutter'} \
+                --user #{username} --pw #{password} \
+                --host #{db_host} --port #{port} \
+                --db #{db_name} --ignore-errors \
+                csv #{file}`
+            
+            # Get and return the table name
+            table_name = /import\.(.*?)\n/.match(response)[1]
+        end
+        return table_name
     end
 end

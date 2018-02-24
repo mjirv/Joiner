@@ -63,11 +63,19 @@ module JoindbApi
     def delete_fdw(join_db, remote_db, password)
         conn = open_connection(join_db, password)
         
-        # TODO: Change this once we have more than just Postgres and MySQL
+        # Change if other db types have different schema names in future
         schema_name = (remote_db.postgres? or remote_db.redshift?) ? "#{remote_db.database_name}_#{remote_db.schema}" : "#{remote_db.database_name}"
 
-        conn.exec("DROP SERVER IF EXISTS #{schema_name} CASCADE")
-        conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
+        if schema_name
+            conn.exec("DROP SERVER IF EXISTS #{schema_name} CASCADE")
+            conn.exec("DROP SCHEMA IF EXISTS #{schema_name} CASCADE")
+        end
+        conn.close()
+    end
+
+    def delete_csv(join_db, remote_db, password)
+        conn = open_connection(join_db, password)
+        conn.exec("DROP TABLE import.#{remote_db.table_name}")
         conn.close()
     end
 
@@ -94,4 +102,15 @@ module JoindbApi
         JoinDBApiMethods.add_fdw_other(username: join_db.username, password: password, db_name: DB_NAME, db_host: join_db.host, port: join_db.port, remote_user: remote_db.remote_user, remote_pass: remote_password, remote_host: remote_db.host, remote_db_name: remote_db.database_name, remote_port: remote_db.port, driver_type: "SQL Server")
     end
 
+    def add_csv(join_db, remote_db, password)
+        # Add it as a table using pgfutter
+        JoinDBApiMethods.add_csv(
+            files: [remote_db.filepath],
+            username: join_db.username,
+            password: password,
+            db_name: DB_NAME,
+            db_host: join_db.host,
+            port: join_db.port
+        )
+    end
 end
