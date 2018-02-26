@@ -125,6 +125,9 @@ class RemoteDbsController < ApplicationController
         
         # Get the needed JoinDb it belongs to
         join_db = JoinDb.find(remote_db.join_db_id)
+
+        # Make sure they know they pressed it
+        flash[:success] = "Connection refresh in progress..."
         
         # Refresh the mapping via joindb_api.rb
         Concurrent::Promise.execute{ 
@@ -135,7 +138,7 @@ class RemoteDbsController < ApplicationController
             current_user.id, "An error occurred while refreshing your connection."
         )}
 
-        flash[:success] =  "Connection refresh in progress..."
+        redirect_to join_db_path(join_db.id)
     end
 
     def destroy

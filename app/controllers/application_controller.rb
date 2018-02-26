@@ -64,9 +64,6 @@ class ApplicationController < ActionController::Base
                 n.status = Notification.statuses[:disabled]
                 n.save
             end
-        else
-            flash[:notice] = nil
-            flash[:success] = nil
         end
     end
     helper_method :show_notifications
