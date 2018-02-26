@@ -14,7 +14,7 @@ class JoinDbsController < ApplicationController
             session[:join_db_password] = nil
         end
 
-        @page_title = JoinDb.find(params[:id]).name
+        @page_title = "Your JoinDb - #{JoinDb.find(params[:id]).name}"
 
         # Show RemoteDbs
         @remote_dbs = RemoteDb.where(join_db_id: params[:id])
