@@ -50,18 +50,6 @@ body {
     }
 }
 
-.mainButton {
-  background-color: #91cb3e;
-  display: block;
-  border: 0px;
-  border-radius: 2px;
-  font-weight: bold;
-  &:hover {
-    background-color: #53a548;
-  }
-  padding: 5px;
-}
-
 .button {
   background-color: #91cb3e;
   padding: 1px 6px;
@@ -73,6 +61,11 @@ body {
     background-color: #53a548;
     text-decoration: none;
   }
+}
+
+.button.mainButton {
+  font-weight: bold;
+  padding: 5px;
 }
 
 .button.yellow {
