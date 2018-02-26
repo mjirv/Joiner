@@ -151,11 +151,11 @@ class RemoteDbsController < ApplicationController
                 @remote_db.destroy
             end
             redirect_to join_db_path(join_db_id)
-        rescue
+        rescue Exception => e
             handle_error(
                 @remote_db,
                 "Could not delete your connection:
-                    #{@remote_db.errors.full_messages}"
+                    #{e}"
             )
         end
     end
