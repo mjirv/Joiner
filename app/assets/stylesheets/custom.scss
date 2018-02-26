@@ -64,11 +64,14 @@ body {
 
 .button {
   background-color: #91cb3e;
-  display: block;
+  padding: 1px 6px;
   border: 0px;
   border-radius: 2px;
+  text-decoration: none;
+  color: #333333;
   &:hover {
     background-color: #53a548;
+    text-decoration: none;
   }
 }
 
