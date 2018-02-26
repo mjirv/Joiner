@@ -12,7 +12,7 @@ class UsersController < ApplicationController
         user = User.new(user_params)
 
         # Temporary code to limit the number of beta users
-        if User.count >= ENV['BETA_USER_LIMIT']
+        if User.count >= ENV['BETA_USER_LIMIT'].to_i
             limit_beta(user)
             flash[:success] = "Thanks for signing up! Our closed beta is full right now, but we've added you to the wait list and will let you know as soon as a spot opens up. Please contact michael@getjoiner.com with any questions!"
             redirect_to '/login'
