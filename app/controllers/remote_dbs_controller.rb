@@ -135,10 +135,7 @@ class RemoteDbsController < ApplicationController
             current_user.id, "An error occurred while refreshing your connection."
         )}
 
-        create_success_notification(
-            current_user.id,
-            "Connection refresh in progress..."
-        )
+        flash[:success] =  "Connection refresh in progress..."
     end
 
     def destroy
