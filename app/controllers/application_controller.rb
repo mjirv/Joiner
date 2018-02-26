@@ -44,18 +44,27 @@ class ApplicationController < ActionController::Base
     end
 
     def show_notifications
-        notifications = get_error_notifications + get_success_notifications
-        if notifications.length > 0
+        error_notifications = get_error_notifications
+        success_notifications = get_success_notifications
+        notifications = error_notifications + success_notifications
+
+        if error_notifications.length > 0
             flash[:notice] = notifications.select{|n| n.error?}.
                 map(&:message).join("\n")
+        end
+        if success_notifications.length > 0
             flash[:success] = notifications.select{|n| n.success?}.
                 map(&:message).join("\n")
+        end
+
+        if notifications.length > 0
             notifications.map do |n|
                 n.status = Notification.statuses[:disabled]
                 n.save
             end
         else
             flash[:notice] = nil
+            flash[:success] = nil
         end
     end
     helper_method :show_notifications
