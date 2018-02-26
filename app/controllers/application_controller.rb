@@ -27,14 +27,29 @@ class ApplicationController < ActionController::Base
         end
     end
 
-    def get_notifications
-        @notifications = Notification.where(user_id: current_user.id, status: Notification.statuses[:enabled])
+    def get_error_notifications
+        @notifications = Notification.where(
+            user_id: current_user.id, 
+            status: Notification.statuses[:enabled], 
+            notification_type: Notification.notification_types[:error]
+        )
+    end
+
+    def get_success_notifications
+        notifications = Notification.where(
+            user_id: current_user.id,
+            status: Notification.statuses[:enabled],
+            notification_type: Notification.notification_types[:success]
+        )
     end
 
     def show_notifications
-        notifications = get_notifications()
+        notifications = get_error_notifications + get_success_notifications
         if notifications.length > 0
-            flash[:notice] = notifications.map(&:message).join("\n")
+            flash[:notice] = notifications.select{|n| n.error?}.
+                map(&:message).join("\n")
+            flash[:success] = notifictions.select{|n| n.success?}.
+                map(&:message).join("\n")
             notifications.map do |n|
                 n.status = Notification.statuses[:disabled]
                 n.save
