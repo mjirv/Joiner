@@ -107,7 +107,7 @@ module JoindbApiMethods
             
             # Import the schema
             conn.exec("CREATE SCHEMA #{schema_name}")
-            conn.exec("IMPORT FOREIGN SCHEMA #{schema_name}
+            conn.exec("IMPORT FOREIGN SCHEMA \"#{schema_name}\"
                 FROM SERVER #{schema_name}
                 INTO #{schema_name}
                 OPTIONS (
