@@ -11,7 +11,7 @@
         <%= f.file_field :csv, accept: 'text/csv' %>
         <%= f.hidden_field :db_type, value: "csv" %>
         <%= f.hidden_field :join_db_id, value: @join_db.id %>
-        <%= f.submit 'Add CSV' %>
+        <%= f.submit 'Add CSV', class: "button" %>
     <% end %>
 </p>
 <% @remote_dbs.each do |rdb| %>
