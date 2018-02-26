@@ -194,10 +194,13 @@ class RemoteDbsController < ApplicationController
                 return false
             end
         end
-        promise.execute.rescue{|reason| create_error_notification(
-            current_user.id,
-            "Error creating your Connection. Error was: #{reason}"
-        )}
+        promise.execute.rescue{|reason| 
+            create_error_notification(
+                current_user.id,
+                "Error creating your Connection. Error was: #{reason}"
+            )
+            remote_db.destroy rescue remote_db.delete
+        }
     end
 
     def handle_error(remote_db, message)
