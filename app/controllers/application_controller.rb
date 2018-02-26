@@ -8,8 +8,10 @@ class ApplicationController < ActionController::Base
     helper_method :current_user
     
     def authorize
-        flash[:notice] = "You are not logged in. Please log in or sign up!"
-        redirect_to '/signup' and return unless current_user
+        if not current_user
+            flash[:notice] = "You are not logged in. Please log in or sign up!"
+            redirect_to '/signup' and return
+        end
     end
 
     def authorize_owner(join_db_id=nil)
@@ -28,7 +30,7 @@ class ApplicationController < ActionController::Base
     end
 
     def get_error_notifications
-        @notifications = Notification.where(
+        notifications = Notification.where(
             user_id: current_user.id, 
             status: Notification.statuses[:enabled], 
             notification_type: Notification.notification_types[:error]
