@@ -107,7 +107,7 @@ module JoindbApiMethods
             
             # Import the schema
             conn.exec("CREATE SCHEMA #{schema_name}")
-            conn.exec("IMPORT FOREIGN SCHEMA #{schema_name}
+            conn.exec("IMPORT FOREIGN SCHEMA \"#{schema_name}\"
                 FROM SERVER #{schema_name}
                 INTO #{schema_name}
                 OPTIONS (
@@ -205,7 +205,7 @@ module JoindbApiMethods
             file = file.gsub("\n","")
 
             # pgfutter it to the database
-            response = `#{ENV['PGFUTTER'] || 'pgfutter'} \
+            response = `#{ENV['PGFUTTER']} \
                 --user #{username} --pw #{password} \
                 --host #{db_host} --port #{port} \
                 --db #{db_name} --ignore-errors \

@@ -75,7 +75,9 @@ module JoindbApi
 
     def delete_csv(join_db, remote_db, password)
         conn = open_connection(join_db, password)
-        conn.exec("DROP TABLE import.#{remote_db.table_name}")
+        if remote_db.table_name
+            conn.exec("DROP TABLE IF EXISTS import.#{remote_db.table_name}")
+        end
         conn.close()
     end
 

@@ -151,11 +151,11 @@ class RemoteDbsController < ApplicationController
                 @remote_db.destroy
             end
             redirect_to join_db_path(join_db_id)
-        rescue
+        rescue Exception => e
             handle_error(
                 @remote_db,
                 "Could not delete your connection:
-                    #{@remote_db.errors.full_messages}"
+                    #{e}"
             )
         end
     end
@@ -194,10 +194,13 @@ class RemoteDbsController < ApplicationController
                 return false
             end
         end
-        promise.execute.rescue{|reason| create_error_notification(
-            current_user.id,
-            "Error creating your Connection. Error was: #{reason}"
-        )}
+        promise.execute.rescue{|reason| 
+            create_error_notification(
+                current_user.id,
+                "Error creating your Connection. Error was: #{reason}"
+            )
+            remote_db.destroy rescue remote_db.delete
+        }
     end
 
     def handle_error(remote_db, message)
