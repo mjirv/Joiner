@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
         if notifications.length > 0
             flash[:notice] = notifications.select{|n| n.error?}.
                 map(&:message).join("\n")
-            flash[:success] = notifictions.select{|n| n.success?}.
+            flash[:success] = notifications.select{|n| n.success?}.
                 map(&:message).join("\n")
             notifications.map do |n|
                 n.status = Notification.statuses[:disabled]
