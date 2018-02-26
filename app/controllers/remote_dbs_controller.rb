@@ -134,6 +134,11 @@ class RemoteDbsController < ApplicationController
         )}.rescue{|reason| create_error_notification(
             current_user.id, "An error occurred while refreshing your connection."
         )}
+
+        create_success_notification(
+            current_user.id,
+            "Connection refresh in progress..."
+        )
     end
 
     def destroy
