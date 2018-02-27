@@ -8,6 +8,7 @@
         </div>
     </div>
 
+    <% if @join_db.host.exclude? "provisioning" %>
     <div class="test" style="display: block; float: left">
         <h3>Add Connections</h3>
         <div class="infoTile">
@@ -27,6 +28,7 @@
             </p>
         </div>
     </div>
+    <% end %>
 </div>
 <div>
 <br />

@@ -127,7 +127,7 @@ class RemoteDbsController < ApplicationController
         join_db = JoinDb.find(remote_db.join_db_id)
 
         # Make sure they know they pressed it
-        flash[:success] = "Connection refresh in progress..."
+        flash[:success] = "Kicked off connection refresh!"
         
         # Refresh the mapping via joindb_api.rb
         Concurrent::Promise.execute{ 

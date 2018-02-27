@@ -16,18 +16,18 @@ class JoinDb < ApplicationRecord
         self.port = connection_info[:port]
         self.task_arn = connection_info[:task_arn]
 
+        # Add the user to it
+        # Wait a while to make sure this works
+        # TODO: Make this a callback based on success of create_join_db()
+        sleep(180)
+        add_user(username, password, self)
+
         begin
             self.save!
         rescue Exception => e
             stop_join_db(task_arn)
             raise e
         end
-
-        # Add the user to it
-        # Wait a while to make sure this works
-        # TODO: Make this a callback based on success of create_join_db()
-        sleep(180)
-        add_user(username, password, self)
     end
 
     private
