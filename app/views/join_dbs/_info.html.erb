@@ -1,4 +1,5 @@
 <p>
+    <% if join_db.provisioning? %><b>Status:</b> <%= join_db.status %><% end %>
     <ul>
         <li><b>Host:</b> <%= join_db.host %>
         <li><b>Port:</b> <%= join_db.port %>

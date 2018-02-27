@@ -1,6 +1,7 @@
 class RemoteDb < ApplicationRecord
   belongs_to :join_db
   enum db_type: %w(postgres mysql sql_server redshift csv)
+  enum status: %w(disabled enabled provisioning)
   validates :join_db_id, presence: true
   validates :db_type, presence: true
   validates :database_name, presence: true, unless: -> record { record.csv? }

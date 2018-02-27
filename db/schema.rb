@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180222062748) do
+ActiveRecord::Schema.define(version: 20180227062153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,10 +20,11 @@ ActiveRecord::Schema.define(version: 20180222062748) do
     t.string   "host"
     t.integer  "port"
     t.integer  "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.string   "username"
     t.string   "task_arn"
+    t.integer  "status",     default: 1
     t.index ["user_id"], name: "index_join_dbs_on_user_id", using: :btree
   end
 
@@ -46,10 +47,11 @@ ActiveRecord::Schema.define(version: 20180222062748) do
     t.integer  "db_type"
     t.integer  "join_db_id"
     t.string   "database_name"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.string   "filepath"
     t.string   "table_name"
+    t.integer  "status",        default: 1
     t.index ["join_db_id"], name: "index_remote_dbs_on_join_db_id", using: :btree
   end
 

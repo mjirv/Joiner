@@ -36,6 +36,8 @@ class JoinDbsController < ApplicationController
             reject{|k, v| k == 'password' }.
             merge(user_id: current_user.id))
         @join_db.host = "provisioning..."
+        @join_db.status = JoinDb.statuses[:provisioning]
+
         if @join_db.save
             # Create the JoinDb
             Concurrent::Promise.execute { 
@@ -43,7 +45,11 @@ class JoinDbsController < ApplicationController
                     join_db_params[:username],
                     join_db_params[:password]
                 )
-            }.rescue do |reason|
+            }.on_success{|_|
+                @join_db.status = JoinDb.statuses[:enabled]
+                @join_db.save
+            }.
+            rescue do |reason|
                 create_error_notification(
                     current_user.id,
                     "Error creating your JoinDb. Please try again in a
