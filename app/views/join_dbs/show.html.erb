@@ -35,6 +35,9 @@
     <div class="infoTile <%= rdb.db_type %>">
         <h4><%= rdb.name %></h4>
         <p>
+            <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
+        </p>
+        <p>
         <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "button yellow" %>
         <br />
         <%= link_to 'Delete', delete_remote_db_path(rdb.id), {class: "deleteLink"} %>

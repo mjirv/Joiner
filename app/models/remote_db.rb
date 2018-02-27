@@ -10,4 +10,12 @@ class RemoteDb < ApplicationRecord
   validates :schema, presence: true, 
     if: -> record { record.postgres? or record.redshift? }
 
+  def get_join_db_schema_name
+    if self.postgres? or self.redshift?
+      "#{self.database_name}_#{self.schema}"
+    else
+      "#{self.database_name}"
+    end
+  end
+
 end
