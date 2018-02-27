@@ -32,7 +32,7 @@
 <br />
 <h3>Connections</h3>
 <% @remote_dbs.each do |rdb| %>
-    <div class="infoTile">
+    <div class="infoTile <%= rdb.db_type %>">
         <h4><%= rdb.name %></h4>
         <p>
         <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "button yellow" %>

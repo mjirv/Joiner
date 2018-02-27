@@ -41,6 +41,35 @@ body {
     border: 1px solid darkgrey;
     padding: 10px;
     border-radius: 2px;
+    background-color: rgb(240, 240, 240);
+}
+
+.infoTile.mysql {
+  background-image:  linear-gradient(
+    to bottom, rgba(240,240,240,0.9) 0%,rgba(240,240,240,0.9) 100%
+    ), image-url('mysql-vector1.jpg');
+  background-size: cover;
+}
+
+.infoTile.postgres {
+  background-image:  linear-gradient(
+    to bottom, rgba(240,240,240,0.9) 0%,rgba(240,240,240,0.9) 100%
+    ), image-url('postgresql-logo.png');
+  background-size: cover;
+}
+
+.infoTile.redshift {
+  background-image:  linear-gradient(
+    to bottom, rgba(240,240,240,0.9) 0%,rgba(240,240,240,0.9) 100%
+    ), image-url('redshift.jpg');
+  background-size: cover;
+}
+
+.infoTile.sql_server {
+  background-image:  linear-gradient(
+    to bottom, rgba(240,240,240,0.9) 0%,rgba(240,240,240,0.9) 100%
+    ), image-url('MicrosoftSQLServer.jpg');
+  background-size: cover;
 }
 
 .deleteLink {
