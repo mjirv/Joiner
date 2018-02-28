@@ -29,6 +29,12 @@ class ApplicationController < ActionController::Base
         end
     end
 
+    def confirm_join_db_password(join_db_id = nil)
+        join_db_id ||= @remote_db.join_db_id
+
+        redirect_to confirm_join_db_password_path(join_db_id) and return if not (session[:join_db_password] and session[:join_db_id].to_i == join_db_id)
+    end
+
     def get_error_notifications
         notifications = Notification.where(
             user_id: current_user.id, 

@@ -2,9 +2,14 @@ class JoinDbsController < ApplicationController
     before_action :authorize
     before_action :set_join_db, only: [:show, :update, :edit, :destroy, :confirm_password_view]
     before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
-    before_action :confirm_join_db_password, only: [:update]
     before_action :show_notifications
     before_action :check_trial_joindb_limit, only: [:new, :create]
+    before_action only: [:show, :update] do
+        join_db_id = params[:id].to_i
+        if not JoinDb.find(join_db_id).provisioning?
+            confirm_join_db_password(join_db_id)
+        end
+    end
 
     # GET /joindb/:id
     def show
@@ -46,6 +51,9 @@ class JoinDbsController < ApplicationController
                     join_db_params[:password]
                 )
             }.on_success{|_|
+                if session[:join_db_id].to_i == @join_db.id
+                    session[:join_db_password] = join_db_params[:password]
+                end
                 @join_db.status = JoinDb.statuses[:enabled]
                 @join_db.save
             }.
@@ -107,10 +115,6 @@ class JoinDbsController < ApplicationController
 
     def set_join_db
         @join_db = JoinDb.find(params[:id])
-    end
-
-    def confirm_join_db_password
-        redirect_to confirm_join_db_password_path(@join_db.id) and return if not (session[:join_db_password] and session[:join_db_id].to_i == @join_db.id)
     end
 
     def check_trial_joindb_limit

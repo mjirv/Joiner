@@ -215,10 +215,4 @@ class RemoteDbsController < ApplicationController
         )
         redirect_to join_db_path(remote_db.join_db_id)
     end
-
-    def confirm_join_db_password(join_db_id = nil)
-        join_db_id ||= @remote_db.join_db_id
-
-        redirect_to confirm_join_db_password_path(join_db_id) and return if not (session[:join_db_password] and session[:join_db_id].to_i == join_db_id)
-    end
 end
