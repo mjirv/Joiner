@@ -51,9 +51,6 @@ class JoinDbsController < ApplicationController
                     join_db_params[:password]
                 )
             }.on_success{|_|
-                if session[:join_db_id].to_i == @join_db.id
-                    session[:join_db_password] = join_db_params[:password]
-                end
                 @join_db.status = JoinDb.statuses[:enabled]
                 @join_db.save
             }.
