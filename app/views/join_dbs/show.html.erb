@@ -38,9 +38,11 @@
 <% @remote_dbs.each do |rdb| %>
     <div class="infoTile <%= rdb.db_type %>">
         <h4><%= rdb.name %></h4>
-        <p>
-            <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
-        </p>
+        <% if rdb.table_name or (not rdb.csv? and rdb.get_join_db_schema_name) %>
+            <p>
+                <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
+            </p>
+        <% end %>
         <p>
         <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "button yellow" %>
         <br />
