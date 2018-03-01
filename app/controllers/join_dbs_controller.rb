@@ -120,7 +120,10 @@ class JoinDbsController < ApplicationController
 
     def check_trial_joindb_limit
         # Limit trial users to 1 JoinDb
-        if current_user.tier == "trial" and JoinDb.where(user_id: current_user.id).count > 0
+        if current_user.tier == "trial" and JoinDb.where(
+            user_id: current_user.id,
+            status: JoinDb.statuses[:enabled]
+        ).count > 0
             create_error_notification(
                 current_user.id,
                 "Please upgrade to create more than one JoinDB. Contact us at michael@getjoiner.com to upgrade!"
