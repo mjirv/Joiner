@@ -148,12 +148,14 @@ class RemoteDbsController < ApplicationController
                 delete_csv(
                     @remote_db.join_db, @remote_db, session[:join_db_password]
                 )
-                @remote_db.destroy
+                @remote_db.status = RemoteDb.statuses[:disabled]
+                @remote_db.save
             else
                 delete_fdw(
                     @remote_db.join_db, @remote_db, session[:join_db_password]
                 )
-                @remote_db.destroy
+                @remote_db.status = RemoteDb.statuses[:disabled]
+                @remote_db.save
             end
             redirect_to join_db_path(join_db_id)
         rescue Exception => e

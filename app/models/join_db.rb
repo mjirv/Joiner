@@ -31,6 +31,12 @@ class JoinDb < ApplicationRecord
         add_user(username, password, self)
     end
 
+    def disable
+        self.status = JoinDb.statuses[:disabled]
+        self.destroy_ecs_instance
+        self.save
+    end
+
     private
     def destroy_ecs_instance
         if self.task_arn

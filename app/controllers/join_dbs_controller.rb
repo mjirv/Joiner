@@ -81,7 +81,7 @@ class JoinDbsController < ApplicationController
 
     # DELETE /joindb/:id
     def destroy
-        @join_db.destroy
+        @join_db.disable
         redirect_to '/'
     end
 
