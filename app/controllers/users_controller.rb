@@ -34,7 +34,10 @@ class UsersController < ApplicationController
 
     def show
         @page_title = "Your JoinDBs"
-        @join_dbs = JoinDb.where(user_id: session[:user_id])
+        @join_dbs = JoinDb.where(
+            user_id: session[:user_id],
+            status: JoinDb.statuses[:enabled]
+        )
     end
 
     def confirm_email

@@ -22,7 +22,11 @@ class JoinDbsController < ApplicationController
         @page_title = "Your JoinDb - #{JoinDb.find(params[:id]).name}"
 
         # Show RemoteDbs
-        @remote_dbs = RemoteDb.where(join_db_id: params[:id])
+        @remote_dbs = RemoteDb.where(
+            join_db_id: params[:id],
+            status: [RemoteDb.statuses[:enabled],
+                RemoteDb.statuses[:provisioning]]
+        )
         @new_rdb = RemoteDb.new
     end
 
