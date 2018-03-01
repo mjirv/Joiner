@@ -16,8 +16,8 @@ class User < ApplicationRecord
 
     def disable
         # Make sure all the user's JoinDbs turn off
-        JoinDbs = JoinDb.where(user_id: self.id)
-        JoinDbs.map do |jdb|
+        join_dbs = JoinDb.where(user_id: self.id)
+        join_dbs.map do |jdb|
             jdb.disable
         end
 

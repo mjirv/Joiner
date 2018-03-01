@@ -32,8 +32,15 @@ class JoinDb < ApplicationRecord
     end
 
     def disable
+        # Disable the RemoteDbs
+        remote_dbs = RemoteDb.where(
+            join_db_id: self.id,
+            status: RemoteDb.statuses[:enabled]
+        )
+        remote_dbs.map(&:disable)
+
         self.status = JoinDb.statuses[:disabled]
-        self.destroy_ecs_instance
+        destroy_ecs_instance
         self.save
     end
 

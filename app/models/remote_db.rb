@@ -19,4 +19,9 @@ class RemoteDb < ApplicationRecord
     end
   end
 
+  def disable
+    self.status = RemoteDb.statuses[:disabled]
+    self.save
+  end
+
 end
