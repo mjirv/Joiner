@@ -51,11 +51,11 @@ module AwsFunctions
     def stop_join_db(task_arn)
         # Something about the default Ruby SSL certificate
         Aws.use_bundled_cert!
+        ec2_client = Aws::EC2::Client.new()
 
-        ecs_client = Aws::ECS::Client.new()
-        ecs_client.stop_task({
-            cluster: ENV['CLUSTER'] || CLUSTER_NAME,
-            task: task_arn
+        resp = ec2_client.terminate_instances({
+            instance_ids: [task_arn], # required
+            dry_run: false,
         })
     end
 end
