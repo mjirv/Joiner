@@ -1,4 +1,5 @@
 module AwsFunctions
+    LAUNCH_TEMPLATE_ID = "lt-0912ea6ef3e419531"
 
     def create_join_db(user_id, join_db_id)
         # Something about the default Ruby SSL certificate
@@ -27,7 +28,9 @@ module AwsFunctions
         available_subnets = ec2_client.describe_subnets.subnets.map(&:subnet_id)
 
         resp = ec2_client.run_instances({
-            launch_template: {launch_template_id: ENV['LAUNCH_TEMPLATE_ID']},
+            launch_template: {
+                launch_template_id: ENV['LAUNCH_TEMPLATE_ID'] || LAUNCH_TEMPLATE_ID
+            },
             max_count: 1,
             min_count: 1,
         })
