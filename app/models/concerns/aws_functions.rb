@@ -1,15 +1,13 @@
 module AwsFunctions
     CLUSTER_NAME = "default"
 
-    def create_join_db()
+    def create_join_db(user_id, join_db_id)
         # Something about the default Ruby SSL certificate
         Aws.use_bundled_cert!
-
-        ecs_client = Aws::ECS::Client.new()
         ec2_client = Aws::EC2::Client.new()
 
-        arn = run_new_join_db_task(
-            ecs_client: ecs_client,
+        instance_id = run_new_join_db_task(
+            cluster_name: cluster_name,
             ec2_client: ec2_client
         )
 
@@ -18,63 +16,36 @@ module AwsFunctions
         
         sleep(10)
         dns_name = get_join_db_public_dns_name(
-            ecs_task_arn: arn,
-            ecs_client: ecs_client,
+            instance_id: instance_id,
             ec2_client: ec2_client
         )
 
         return {
-            task_arn: arn,
+            task_arn: instance_id,
             dns_name: dns_name,
             port: 5432 # Change if we stop putting everything on 5432 
         }
     end
 
-    def run_new_join_db_task(ecs_client:, ec2_client:)
+    def run_new_join_db_task(cluster_name:, ec2_client:)
         available_subnets = ec2_client.describe_subnets.subnets.map(&:subnet_id)
 
-        resp = ecs_client.run_task({
-            cluster: ENV['CLUSTER'] || CLUSTER_NAME,
-            task_definition: "joiner-service:1",
-            launch_type: "FARGATE",
-            network_configuration: {
-                awsvpc_configuration: {
-                    subnets: available_subnets,
-                    security_groups: ["sg-da2fd4ad"],
-                    assign_public_ip: "ENABLED"
-                }
-            }
+        resp = ec2_client.run_instances({
+            launch_template: {launch_template_id: ENV['LAUNCH_TEMPLATE_ID']},
+            max_count: 1,
+            min_count: 1,
         })
 
-        ecs_task_arn = resp.tasks[0].task_arn
-        return ecs_task_arn
+        instance_id = resp.instances[0].instance_id
+        return instance_id
     end
 
-    def get_network_interface_id(ecs_task_arn, ecs_client)
-        task_desc = ecs_client.describe_tasks({
-            cluster: ENV['CLUSTER'] || CLUSTER_NAME,
-            tasks: [ecs_task_arn]
-        })
+    def get_join_db_public_dns_name(instance_id:, ec2_client:)
+        ip_address = ec2_client.describe_instances({
+            instance_ids: [instance_id]
+        }).reservations[0].instances[0].public_ip_address
 
-        network_interface_id = task_desc.tasks[0].attachments[0].details.
-            select{|detail| detail.name == "networkInterfaceId"}[0].value
-        
-        return network_interface_id
-    end
-
-    def get_network_interface_public_dns_name(network_interface_id, ec2_client)
-        dns_name = ec2_client.describe_network_interfaces({
-            network_interface_ids: [network_interface_id]
-        }).network_interfaces[0].association.public_dns_name
-
-        return dns_name
-    end
-
-    def get_join_db_public_dns_name(ecs_task_arn:, ecs_client:, ec2_client:)
-        network_interface_id = get_network_interface_id(ecs_task_arn, ecs_client)
-        dns_name = get_network_interface_public_dns_name(network_interface_id, ec2_client)
-
-        return dns_name
+        return ip_address
     end
 
     def stop_join_db(task_arn)
