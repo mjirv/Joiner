@@ -1,15 +1,11 @@
 module AwsFunctions
-    CLUSTER_NAME = "default"
 
     def create_join_db(user_id, join_db_id)
         # Something about the default Ruby SSL certificate
         Aws.use_bundled_cert!
         ec2_client = Aws::EC2::Client.new()
 
-        instance_id = run_new_join_db_task(
-            cluster_name: cluster_name,
-            ec2_client: ec2_client
-        )
+        instance_id = run_new_join_db_task(ec2_client)
 
         # Wait a little bit so it's created
         # TODO: Make this a callback
@@ -27,7 +23,7 @@ module AwsFunctions
         }
     end
 
-    def run_new_join_db_task(cluster_name:, ec2_client:)
+    def run_new_join_db_task(ec2_client)
         available_subnets = ec2_client.describe_subnets.subnets.map(&:subnet_id)
 
         resp = ec2_client.run_instances({
