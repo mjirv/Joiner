@@ -27,7 +27,7 @@ class JoinDb < ApplicationRecord
         # Add the user to it
         # Wait a while to make sure this works
         # TODO: Make this a callback based on success of create_join_db()
-        sleep(180)
+        sleep(120)
         add_user(username, password, self)
     end
 
