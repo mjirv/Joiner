@@ -12,7 +12,7 @@ class JoinDb < ApplicationRecord
             raise "There is already a cloud DB attached"
         end
 
-        connection_info = create_join_db()
+        connection_info = create_join_db(self.user_id, self.id)
         self.host = connection_info[:dns_name]
         self.port = connection_info[:port]
         self.task_arn = connection_info[:task_arn]
@@ -27,7 +27,7 @@ class JoinDb < ApplicationRecord
         # Add the user to it
         # Wait a while to make sure this works
         # TODO: Make this a callback based on success of create_join_db()
-        sleep(180)
+        sleep(120)
         add_user(username, password, self)
     end
 
@@ -39,6 +39,7 @@ class JoinDb < ApplicationRecord
         )
         remote_dbs.map(&:disable)
 
+        
         self.status = JoinDb.statuses[:disabled]
         destroy_ecs_instance
         self.save
