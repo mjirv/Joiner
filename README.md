@@ -1,6 +1,6 @@
 # JOINER
 
-Joiner is a web application that sets up and manages JoinDB data warehouses in the cloud. Data analysts can easily set up a data warehouse to join multiple data sources in one database and add all their data instead of having to build the databases themselves or hire an engineer or consultant.
+Joiner is a web application that sets up and manages [JoinDB](https://github.com/mjirv/JoinDb) data warehouses in the cloud. Data analysts can easily set up a data warehouse to join multiple data sources in one database and add all their data instead of having to build the databases themselves or hire an engineer or consultant.
 
 ## Setup
 
