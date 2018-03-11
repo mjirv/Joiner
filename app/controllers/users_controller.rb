@@ -35,10 +35,10 @@ class UsersController < ApplicationController
     def update
         @user = User.find(params[:id])
         if @user.update(user_params)
-            flash[:success] = "Successfully reset your password"
+            flash[:success] = "Successfully updated your account"
             redirect_to '/'
         else
-            flash[:notice] = "Invalid password, please try again: #{@user.errors.full_messages}"
+            flash[:notice] = "An error occurred, please try again: #{@user.errors.full_messages}"
             redirect_to reset_password_path(@user.id)
         end
     end
