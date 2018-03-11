@@ -28,4 +28,7 @@ Rails.application.routes.draw do
   patch '/remote_dbs/:id' => 'remote_dbs#update'
   get '/remote_dbs/:id/delete' => 'remote_dbs#destroy', as: 'delete_remote_db'
   post '/refresh_remote_db/:id' => 'remote_dbs#refresh', as: 'refresh_remote_db'
+
+  # Webhook routes for Chargebee events
+  post '/subscription_events' => 'webhooks#subscription_events'
 end
