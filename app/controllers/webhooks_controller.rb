@@ -7,7 +7,7 @@ class WebhooksController < ApplicationController
             data = params.as_json
         end
         
-        console.log(data)
+        puts data
         render json: {body: "success!"}
     end
 end
