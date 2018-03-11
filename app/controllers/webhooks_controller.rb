@@ -8,6 +8,6 @@ class WebhooksController < ApplicationController
         end
         
         console.log(data)
-        render json: "success!"
+        render json: {body: "success!"}
     end
 end
