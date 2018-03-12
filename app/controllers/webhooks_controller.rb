@@ -1,10 +1,10 @@
 class WebhooksController < ApplicationController
     PLAN_TIERS = {
-        "joiner---mini": "individual",
-        "joiner--team": "team",
-        "joiner--individual-annual": "individual",
-        "joiner--team-annual": "team",
-        "cdemo_free": "trial"
+        "joiner---mini" => "individual",
+        "joiner--team" => "team",
+        "joiner--individual-annual" => "individual",
+        "joiner--team-annual" => "team",
+        "cbdemo_free" => "trial"
     }
     
     def subscription_events
@@ -15,12 +15,17 @@ class WebhooksController < ApplicationController
             data = params.as_json
         end
 
-        if data["content"]["customer"]["card_status"] == "valid"
+        if data["event_type"] == "subscription_created" and
+            data["content"]["customer"]["card_status"] == "valid"
             # Create the account
             email = data["content"]["customer"]["email"]
             name = data["content"]["customer"]["billing_address"]["first_name"] + " " + data["content"]["customer"]["billing_address"]["last_name"]
             plan = data["content"]["invoice"]["line_items"][0]["entity_id"]
             password = SecureRandom.urlsafe_base64.to_s
+
+            puts "Plan: #{plan}"
+            puts "Tiers: #{PLAN_TIERS}"
+            puts "So... #{PLAN_TIERS[plan]}"
 
             user = User.create!({
                 email: email,
