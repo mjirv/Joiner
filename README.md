@@ -25,6 +25,7 @@ Joiner is deployed in production on Heroku using a Postgres database. Just deplo
 |RAILS_LOG_TO_STDOUT     |enabled                                            |
 |RAILS_SERVE_STATIC_FILES|enabled                                            |
 |SECRET_KEY_BASE         |_secret_                                           |
+|CHARGEBEE_AUTH_PASSWORD |_secret_                                           |
 
 You may need to run `budle exec rake db:migrate` via the Heroku console.
 
