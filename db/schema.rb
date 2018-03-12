@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180301031853) do
+ActiveRecord::Schema.define(version: 20180312005340) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20180301031853) do
     t.string   "confirm_token"
     t.integer  "tier",            default: 0
     t.integer  "status"
+    t.string   "reset_token"
   end
 
 end

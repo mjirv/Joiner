@@ -35,11 +35,17 @@ class UsersController < ApplicationController
     def update
         @user = User.find(params[:id])
         if @user.update(user_params)
+            # If they're resetting their password, get rid of the token
+            @user.reload()
+            if @user.reset_token
+                @user.reset_token = nil
+                @user.save!
+            end
             flash[:success] = "Successfully updated your account"
             redirect_to '/'
         else
             flash[:notice] = "An error occurred, please try again: #{@user.errors.full_messages}"
-            redirect_to reset_password_path(@user.id)
+            redirect_to reset_password_path(@user.reset_token)
         end
     end
 
@@ -52,12 +58,12 @@ class UsersController < ApplicationController
     end
 
     def confirm_email
-        @user = User.find_by_confirm_token(params[:id])
+        @user = User.find_by_confirm_token(confirm_params)
         if @user
             @user.email_activate()
             flash[:success] = "Welcome to Joiner! Your email has been confirmed. Please reset your password."
             session[:user_id] = @user.id
-            redirect_to reset_password_path(@user.id)
+            redirect_to reset_password_path(@user.reset_token)
         else
             flash[:notice] = "Sorry, that user does not exist."
             redirect_to '/signup'
@@ -65,7 +71,7 @@ class UsersController < ApplicationController
     end
 
     def reset_password
-        @user = User.find_by_id(params[:id])
+        @user = User.find_by_reset_token(confirm_params)
         @page_title = "Reset your password"
     end
 
@@ -79,6 +85,10 @@ class UsersController < ApplicationController
     private
     def user_params
         params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+
+    def confirm_params
+        params.require("token")
     end
 
     def limit_beta(user)
