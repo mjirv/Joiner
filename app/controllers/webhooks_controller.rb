@@ -25,14 +25,16 @@ class WebhooksController < ApplicationController
             plan = data["content"]["invoice"]["line_items"][0]["entity_id"]
             password = SecureRandom.urlsafe_base64.to_s
 
-            puts "Plan: #{plan}"
-            puts "Tiers: #{PLAN_TIERS}"
-            puts "So... #{PLAN_TIERS[plan]}"
+            tier = PLAN_TIERS[plan]
+
+            if not tier
+                render json: {body: "Invalid plan"}, status: 422 and return
+            end
 
             user = User.create!({
                 email: email,
                 name: name,
-                tier: PLAN_TIERS[plan],
+                tier: tier,
                 password: password
             })  
             
@@ -43,7 +45,7 @@ class WebhooksController < ApplicationController
 
             render json: {body: "success!"}
         else
-            render json: {body: "An error occurred", status: 500}
+            render json: {body: "An error occurred"}, status: 500
         end
     end
 end
