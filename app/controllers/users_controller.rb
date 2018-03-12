@@ -61,6 +61,7 @@ class UsersController < ApplicationController
         @user = User.find_by_confirm_token(confirm_params)
         if @user
             @user.email_activate()
+            # TODO: Change this or get rid of in-app signup
             flash[:success] = "Welcome to Joiner! Your email has been confirmed. Please reset your password."
             session[:user_id] = @user.id
             redirect_to reset_password_path(@user.reset_token)
