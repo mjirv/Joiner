@@ -1,4 +1,6 @@
 class WebhooksController < ApplicationController
+    http_basic_authenticate_with name: "chargebee-joiner", password: ENV['CHARGEBEE_AUTH_PASSWORD']
+
     PLAN_TIERS = {
         "joiner---mini" => "individual",
         "joiner--team" => "team",
