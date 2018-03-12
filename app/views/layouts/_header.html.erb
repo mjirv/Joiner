@@ -8,6 +8,7 @@
               <li><%= link_to "Sign Up",   '/signup' %></li>
               <li><%= link_to "Log in", '/login' %></li>
             <% else %>
+              <li><a href="javascript:void(0)" data-cb-type="portal" data-email=<% current_user.email %>> Manage plan </a></li>
               <li><%= link_to "Log out", '/logout' %></li>
             <% end %>
           </ul>
