@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>  
-    <script src="https://js.chargebee.com/v2/chargebee.js" data-cb-site="joiner-test" ></script>
+    <script src="https://js.chargebee.com/v2/chargebee.js" data-cb-site="<% ENV['DATA_CB_SITE'] %>"></script>
     <title>Joiner - <%= @page_title %></title>
     <%= favicon_link_tag asset_path('icon.png'), :rel => 'icon', :type =>  'image/png' %> 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
