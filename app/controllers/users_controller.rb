@@ -66,8 +66,13 @@ class UsersController < ApplicationController
             session[:user_id] = @user.id
             redirect_to reset_password_path(@user.reset_token)
         else
-            flash[:notice] = "Sorry, that user does not exist."
-            redirect_to '/signup'
+            if current_user
+                flash[:notice] = "Looks like you've already confirmed!"
+                redirect_to '/'
+            else
+                flash[:notice] = "Sorry, that user does not exist."
+                redirect_to '/signup'
+            end
         end
     end
 
