@@ -119,8 +119,8 @@ class JoinDbsController < ApplicationController
     end
 
     def check_trial_joindb_limit
-        # Limit trial users to 1 JoinDb
-        if current_user.tier == "trial" and JoinDb.where(
+        # Limit most users to 1 JoinDb
+        if ["individual", "team"].include? current_user.tier and JoinDb.where(
             user_id: current_user.id,
             status: JoinDb.statuses[:enabled]
         ).count > 0
