@@ -30,12 +30,10 @@ class User < ApplicationRecord
     def confirmation_token
         if self.confirm_token.blank?
             self.confirm_token = SecureRandom.urlsafe_base64.to_s
-            self.save!
         end
     end
 
     def change_reset_token
         self.reset_token = SecureRandom.urlsafe_base64.to_s
-        self.save!
     end
 end
