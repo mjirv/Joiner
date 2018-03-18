@@ -1,17 +1,21 @@
-<header class="navbar navbar-fixed-top navbar-inverse">
-      <div class="container">
-        <%= link_to image_tag("logo_white_infront_nopadding.png", alt: "JOINER", style: "height: 100%; width: auto;"), '/', class: 'navbar-brand' %>
-        <nav>
-          <ul class="nav navbar-nav navbar-right">
-            <li><%= link_to "Home",   '/' %></li>
+<div class="container p-1">
+<header class="navbar">
+  <section class="navbar-section">
+  <%= link_to "Joiner", '/', class: 'btn btn-link navbar-brand mr-2' %>
+  </section>
+  <section class="navbar-center">
+        <%= link_to image_tag("icon.png", style: "max-height: 30px; width: auto; padding: 0 5px 5px 5px"), '/', class: 'btn btn-link navbar-brand mr-2' %>
+  </section>
+  <section class="navbar-section">
+            <%= link_to "Home",   '/', class: 'btn btn-link text-light' %>
             <% if not current_user %>
-              <li><%= link_to "Sign Up",   '/signup' %></li>
-              <li><%= link_to "Log in", '/login' %></li>
+              <%= link_to "Sign Up",   '/signup', class: 'btn btn-link text-light' %>
+              <%= link_to "Log in", '/login', class: 'btn btn-link text-light' %>
             <% else %>
-              <li><a href="javascript:void(0)" data-cb-type="portal" data-email=<%= current_user.email %>> Manage plan </a></li>
-              <li><%= link_to "Log out", '/logout' %></li>
+              <a href="javascript:void(0)" data-cb-type="portal" data-email=<%= current_user.email %> class='btn btn-link text-light'> Manage plan </a>
+              <%= link_to "Log out", '/logout', class: 'btn btn-link text-light' %>
             <% end %>
-          </ul>
-        </nav>
-      </div>
-    </header>
+  </section>
+</header>
+<div class="divider"></div>
+</div>

@@ -2,11 +2,12 @@
 <html>
   <head>  
     <script src="https://js.chargebee.com/v2/chargebee.js" data-cb-site="<%= ENV['DATA_CB_SITE'] %>"></script>
+
     <title>Joiner - <%= @page_title %></title>
     <%= favicon_link_tag asset_path('icon.png'), :rel => 'icon', :type =>  'image/png' %> 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-  <body>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+  <body class="bg-gray">
     <%= render 'layouts/header' %>
     <% if flash[:notice] %>
       <div class="notice"><%= flash[:notice] %></div>
@@ -14,7 +15,7 @@
     <% if flash[:success] %>
       <div class="success"><%= flash[:success] %></div>
     <% end %>
-    <div class="container">
+    <div class="container grid-lg">
       <%= yield %>
     </div>
   </body>
