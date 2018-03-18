@@ -1,61 +1,91 @@
-<h2><%= @page_title %></h2>
+<h3 class="s-title"><%= @page_title %></h3>
 <!-- <%= link_to 'Edit', edit_join_db_path(@join_db.id) %> -->
-<div class="top-container" style="width: 100%; display: block; float: left">
-    <div class="test" style="display: block; float: left; margin-right: 20px">
-        <h3>Info</h3>
-        <div class="infoTile" style="font-size: 1.2em">
+<div class="columns">
+    <div class="column col-6 col-xs-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title h5">Info</div>
+        </div>
+        <div class="card-body">
             <%= render partial: 'join_dbs/info', locals: {join_db: @join_db} %>
         </div>
     </div>
-
-    <div class="test" style="display: block; float: left">
-        <h3>Add Connections</h3>
-        <% if @join_db.provisioning? %>
-            <p>You will be able to add connections here once your JoinDb is done provisioning (usually 4-5 minutes).</p>
-        <% else %>
-            <div class="infoTile">
-                <p>
-                <b>Database:</b>
-                <br />
-                <%= link_to 'Add Database', remote_dbs_new_path(join_db: @join_db.id), class: "button mainButton" %>
-                </p>
-                <p>
-                <%= form_for @new_rdb do |f| %>
-                    <%= f.label :add_csv, 'CSV:' %>
-                    <%= f.file_field :csv, accept: 'text/csv' %>
-                    <%= f.hidden_field :db_type, value: "csv" %>
-                    <%= f.hidden_field :join_db_id, value: @join_db.id %>
-                    <%= f.submit 'Add CSV', class: "button mainButton" %>
-                <% end %>
-                </p>
-            </div>
-        <% end %>
+    </div>
+    <div class="column col-6 col-xs-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title h5">Add Connections</div>
+        </div>
+        <div class="card-body">
+            <% if @join_db.provisioning? %>
+                <p>You will be able to add connections here once your JoinDb is done provisioning (usually 4-5 minutes).</p>
+            <% else %>
+                <div>
+                    <p>
+                    <b>Database:</b>
+                    <br />
+                    <%= link_to 'Add Database', remote_dbs_new_path(join_db: @join_db.id), class: "btn btn-success" %>
+                    </p>
+                    <p>
+                    <b>CSV:</b>
+                    <br />
+                    <%= form_for @new_rdb do |f| %>
+                        <%= f.file_field :csv, accept: 'text/csv' %>
+                        <%= f.hidden_field :db_type, value: "csv" %>
+                        <%= f.hidden_field :join_db_id, value: @join_db.id %>
+                        <%= f.submit 'Add CSV', class: "btn btn-success" %>
+                    <% end %>
+                    </p>
+                </div>
+            <% end %>
+        </div>
+    </div>
     </div>
 </div>
-<div>
 <br />
 <h3>Connections</h3>
+<div class="columns">
 <% @remote_dbs.each do |rdb| %>
-    <div class="infoTile <%= rdb.db_type %>">
-        <h4><%= rdb.name %></h4>
-        <% if rdb.table_name or (not rdb.csv? and rdb.get_join_db_schema_name) %>
-            <p>
-                <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
-            </p>
-        <% end %>
-        <p>
-        <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "button yellow" %>
-        <br />
-        <%= link_to 'Delete', delete_remote_db_path(rdb.id), {class: "deleteLink"} %>
-        </p>
-        <ul>
-            <li>DB Type: <%= rdb.db_type %></li>
-            <li>Host: <%= rdb.host %></li>
-            <li>Port: <%= rdb.port %></li>
-            <li>DB Name: <%= rdb.database_name %></li>
-            <li>Schema: <%= rdb.schema %></li>
-            <li>Username: <%= rdb.remote_user %></li>
-        </ul>
+    <div class="column col-4 col-s-6 col-xs-12">
+        <div class="card <%= rdb.db_type %>">
+        <div class="card-header">
+            <div class="card-title h5"><%= rdb.name %></div>
+            <div class="card-subtitle">
+                <div class="chip">
+                    <%= rdb.db_type %>
+                </div>
+                <% if rdb.table_name or (not rdb.csv? and rdb.get_join_db_schema_name) %>
+                    <p>
+                        <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
+                    </p>
+                <% end %>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="popover popover-right">
+                <button class="btn btn-secondary btn-sm">Info</button>
+                    <div class="popover-container">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>
+                                    <div class="tile tile-centered"><b>DB Type: </b><%= rdb.db_type %></div>
+                                    <div class="tile tile-centered"><b>Host: </b><%= rdb.host %></div>
+                                    <div class="tile tile-centered"><b>Port: </b><%= rdb.port %></div>
+                                    <div class="tile tile-centered"><b>DB Name: </b><%= rdb.database_name %></div>
+                                    <div class="tile tile-centered"><b>Schema: </b><%= rdb.schema %></div>
+                                    <div class="tile tile-centered"><b>Username: </b><%= rdb.remote_user %></div>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+            <div class="btn-group">
+            <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "btn btn-primary btn-sm" %>
+            <%= link_to 'Delete', delete_remote_db_path(rdb.id), {class: "btn btn-error btn-sm"} %>
+            </div>
+        </div>
+    </div>
     </div>
 <% end %>
 </div>

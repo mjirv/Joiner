@@ -3,18 +3,17 @@
 <h2><%= @page_title %></h2>
 
 <p>Enter your name, email address, and a password to get started with Joiner!</p>
-<div class="infoTile">
   <%= form_for :user, url: '/users', class: 'form-horizontal center' do |f| %>
     <p>
-      Name: <%= f.text_field :name, class: "form-control" %>
-      Email: <%= f.text_field :email, class: "form-control" %>
+      Name: <%= f.text_field :name, class: "form-input" %>
+      Email: <%= f.text_field :email, class: "form-input" %>
     </p>
     <br />
     <p>
-      Password: <%= f.password_field :password, class: "form-control" %>
-      Password Confirmation: <%= f.password_field :password_confirmation, class: "form-control" %>
+      Password: <%= f.password_field :password, class: "form-input" %>
+      Password Confirmation: <%= f.password_field :password_confirmation, class: "form-input" %>
     </p>
-    <%= f.submit "Submit", class: "button mainButton" %>
+    <%= f.submit "Submit", class: "btn btn-primary" %>
 
   <% end %>
 </div>
