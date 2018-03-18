@@ -18,13 +18,13 @@
     <div class="card">
         <div class="card-header">
             <div class="card-title h5"><%= link_to jdb.name, join_db_path(jdb.id) %></div>
-            <div class="card-subtitle">
-                <%= link_to 'Rename', edit_join_db_path(jdb.id) %>
-                |
-                <%= link_to 'Delete', delete_join_db_path(jdb.id), method: :post, class: "deleteLink", data: { confirm: "Are you sure?" } %>
-            </div>
         </div>
         <div class="card-body">
+            <div class="btn-group">
+                <%= link_to 'Manage Connections', join_db_path(jdb.id), class: "btn btn-sm btn-primary" %>
+                <%= link_to 'Rename', edit_join_db_path(jdb.id), class: "btn btn-sm" %>
+            </div>
+            <%= link_to 'Delete', delete_join_db_path(jdb.id), method: :post, class: "btn btn-error btn-sm" %>
             <%= render partial: 'join_dbs/info', locals: {join_db: jdb} %>
         </div>
     </div>

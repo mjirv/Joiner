@@ -50,25 +50,40 @@
         <div class="card <%= rdb.db_type %>">
         <div class="card-header">
             <div class="card-title h5"><%= rdb.name %></div>
+            <div class="card-subtitle">
+                <div class="chip">
+                    <%= rdb.db_type %>
+                </div>
+                <% if rdb.table_name or (not rdb.csv? and rdb.get_join_db_schema_name) %>
+                    <p>
+                        <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
+                    </p>
+                <% end %>
+            </div>
         </div>
         <div class="card-body">
-            <% if rdb.table_name or (not rdb.csv? and rdb.get_join_db_schema_name) %>
-                <p>
-                    <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
-                </p>
-            <% end %>
+            <div class="popover popover-right">
+                <button class="btn btn-secondary btn-sm">Info</button>
+                    <div class="popover-container">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>
+                                    <div class="tile tile-centered"><b>DB Type: </b><%= rdb.db_type %></div>
+                                    <div class="tile tile-centered"><b>Host: </b><%= rdb.host %></div>
+                                    <div class="tile tile-centered"><b>Port: </b><%= rdb.port %></div>
+                                    <div class="tile tile-centered"><b>DB Name: </b><%= rdb.database_name %></div>
+                                    <div class="tile tile-centered"><b>Schema: </b><%= rdb.schema %></div>
+                                    <div class="tile tile-centered"><b>Username: </b><%= rdb.remote_user %></div>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </button>
+            </div>
             <div class="btn-group">
-            <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "btn btn-sm" %>
+            <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "btn btn-primary btn-sm" %>
             <%= link_to 'Delete', delete_remote_db_path(rdb.id), {class: "btn btn-error btn-sm"} %>
             </div>
-            <p>
-                <div class="tile tile-centered"><b>DB Type: </b><%= rdb.db_type %></div>
-                <div class="tile tile-centered"><b>Host: </b><%= rdb.host %></div>
-                <div class="tile tile-centered"><b>Port: </b><%= rdb.port %></div>
-                <div class="tile tile-centered"><b>DB Name: </b><%= rdb.database_name %></div>
-                <div class="tile tile-centered"><b>Schema: </b><%= rdb.schema %></div>
-                <div class="tile tile-centered"><b>Username: </b><%= rdb.remote_user %></div>
-            </p>
         </div>
     </div>
     </div>
