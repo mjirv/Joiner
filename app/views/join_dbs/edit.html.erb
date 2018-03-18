@@ -1,13 +1,9 @@
 <h2><%= @page_title %></h2>
 
-<div class="infoTile">
-    <%= form_for @join_db do |form| %>
-        <p>
-            <%= form.label :nickname %>
-            <%= form.text_field :name %>
-        </p>
-        <p>
-            <%= form.submit class: "button" %>
-        </p>
-    <% end %>
-</div>
+<%= form_for @join_db do |form| %>
+    <div class="form-group">
+        <%= form.label :nickname %>
+        <%= form.text_field :name %>
+    </div>
+    <%= form.submit class: "btn btn-primary" %>
+<% end %>
