@@ -1,44 +1,78 @@
 <h2>New Connection</h2>
 
-<div class="infoTile" style="width: 400px;">
-<%= form_for @remote_db do |form| %>
-    <p>
-        <p>
-            <%= form.label(:name, "Nickname for new connection") %>
-            <%= form.text_field :name, class: 'form-control' %>
-        </p>
-        <p>
+<%= form_for @remote_db, html: {class: 'form-horizontal'} do |form| %>
+    <div class="form-group">
+        <div class="column col-3 col-sm-12">
+            <%= form.label(:name, "Nickname for new connection", class: 'form-label') %>
+        </div>
+        <div class="column col-9 col-sm-12">
+            <%= form.text_field :name, class: 'form-input' %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="column col-3 col-sm-12">
+            <%= form.label(:db_type, "Database type", class: 'form-label') %>
+        </div>
+        <div class="column col-9 col-sm-12">
+            <select class="form-select">
+                <option>Postgres</option>
+                <option>MySQL</option>
+                <option>SQL Server</option>
+                <option>Redshift</option>
+            </select>
+        </div>
+    </div>
+            <!--
             <%= form.radio_button :db_type, @POSTGRES %>
-            <%= form.label(:db_postgres, "PostgreSQL") %>
+            <%= form.label(:db_postgres, "PostgreSQL", class: 'form-label') %>
             <%= form.radio_button :db_type, @MYSQL %>
-            <%= form.label(:db_mysql, "MySQL") %>
+            <%= form.label(:db_mysql, "MySQL", class: 'form-label') %>
             <%= form.radio_button :db_type, @SQLSERVER %>
-            <%= form.label(:db_sqlserver, "SQL Server") %>
+            <%= form.label(:db_sqlserver, "SQL Server", class: 'form-label') %>
             <%= form.radio_button :db_type, @REDSHIFT %>
-            <%= form.label(:db_redshift, "Redshift") %>
-        </p>
-        <br />
-        <p>
-            <%= form.label(:host, "Host Address") %>
-            <%= form.text_field :host, class: 'form-control' %>
-            <%= form.label(:port) %>
-            <%= form.text_field :port, class: 'form-control' %>
-            <%= form.label(:database_name, "Database Name") %>
-            <%= form.text_field :database_name, class: 'form-control' %>
-            <%= form.label(:schema) %>
-            <%= form.text_field :schema, class: 'form-control' %>
-        </p>
-        <br />
-        <p>
-            <%= form.label(:remote_user, "Username") %>
-            <%= form.text_field :remote_user, class: 'form-control' %>
-            <%= form.label(:password) %>
-            <%= form.password_field :password, class: 'form-control' %>
-            <%= form.hidden_field :join_db_id, value: @join_db_id %>
-        </p>
-    </p>
-    <p>
-        <%= form.submit("Add Connection", class: "button mainButton") %>
-    </p>
+            <%= form.label(:db_redshift, "Redshift", class: 'form-label') %>
+            -->
+    <div class="form-group">
+        <div class="column col-3 col-sm-12">
+            <%= form.label(:host, "Host Address", class: 'form-label') %>
+        </div>
+        <div class="column col-9 col-sm-12">
+            <%= form.text_field :host, class: 'form-input' %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="column col-3 col-sm-12">
+            <%= form.label(:port, nil, class: 'form-label') %>
+        </div>
+        <div class="column col-3 col-sm-12">
+            <%= form.text_field :port, class: 'form-input' %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="column col-3 col-sm-12">
+            <%= form.label(:database_name, "Database Name", class: 'form-label') %>
+        </div>
+        <div class="column col-9 col-sm-12">
+            <%= form.text_field :database_name, class: 'form-input' %>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="column col-3 col-sm-12">
+            <%= form.label(:schema, nil, class: 'form-label') %>
+        </div>
+        <div class="column col-9 col-sm-12">
+            <%= form.text_field :schema, class: 'form-input' %>
+        </div>
+    </div>
+    <div class="form-group">
+        <%= form.label(:remote_user, "Username", class: 'form-label') %>
+        <%= form.text_field :remote_user, class: 'form-input' %>
+        <%= form.label(:password, nil, class: 'form-label') %>
+        <%= form.password_field :password, class: 'form-input' %>
+        <%= form.hidden_field :join_db_id, value: @join_db_id %>
+    </div>
+
+    <%= form.submit("Add Connection", class: "btn btn-success") %>
+
 <% end %>
 </div>
