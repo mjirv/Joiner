@@ -2,18 +2,17 @@
 
 <div class="form-group">
     <%= form_for @join_db do |form| %>
-        <p>
-            <%= form.label :nickname %>
-            <%= form.text_field :name %>
-        </p>
-        <p>
-            <%= form.label :choose_a_username %>
-            <%= form.text_field :username %>
-            <br />
-            <%= form.label :choose_a_password %>
-            <%= form.password_field :password %>
-        <p>
-            <%= form.submit class: "button" %>
-        </p>
+        <div class='form-group'>
+            <%= form.label :nickname, class: 'form-label' %>
+            <%= form.text_field :name, class: 'form-input' %>
+        </div>
+        <div class='form-group'>
+            <%= form.label :choose_a_username, class: 'form-label' %>
+            <%= form.text_field :username, class: 'form-input' %>
+            <%= form.label :choose_a_password, class: 'form-label' %>
+            <%= form.password_field :password, class: 'form-input' %>
+        <div>
+        <br />
+        <%= form.submit class: "button", class: 'btn btn-success' %>
     <% end %>
 </div>
