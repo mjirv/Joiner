@@ -65,9 +65,9 @@
         </div>
     </div>
     <div class="form-group">
-        <%= form.label(:remote_user, "Username", class: 'form-label') %>
+        <%= form.label(:remote_user, "Database username", class: 'form-label') %>
         <%= form.text_field :remote_user, class: 'form-input' %>
-        <%= form.label(:password, nil, class: 'form-label') %>
+        <%= form.label(:password, "Database password", class: 'form-label') %>
         <%= form.password_field :password, class: 'form-input' %>
         <%= form.hidden_field :join_db_id, value: @join_db_id %>
     </div>

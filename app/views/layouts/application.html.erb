@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
   <body class="bg-gray">
     <%= render 'layouts/header' %>
-    <% if flash[:notice] %>
-      <div class="notice"><%= flash[:notice] %></div>
-    <% end %>
-    <% if flash[:success] %>
-      <div class="success"><%= flash[:success] %></div>
-    <% end %>
     <div class="container grid-lg">
+      <% if flash[:notice] %>
+        <div class="toast toast-error"><%= flash[:notice] %></div>
+      <% end %>
+      <% if flash[:success] %>
+        <div class="toast toast-success"><%= flash[:success] %></div>
+      <% end %>
       <%= yield %>
     </div>
   </body>
