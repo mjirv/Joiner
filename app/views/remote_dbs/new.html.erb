@@ -14,12 +14,12 @@
             <%= form.label(:db_type, "Database type", class: 'form-label') %>
         </div>
         <div class="column col-9 col-sm-12">
-            <select class="form-select">
-                <option>Postgres</option>
-                <option>MySQL</option>
-                <option>SQL Server</option>
-                <option>Redshift</option>
-            </select>
+            <%= form.select(:db_type, [
+                ["Postgres", @POSTGRES],
+                ["MySQL", @MYSQL],
+                ["Microsoft SQL Server", @SQLSERVER],
+                ["Redshift", @REDSHIFT]
+            ], {}, {class: 'form-select'}) %>
         </div>
     </div>
             <!--
