@@ -1,6 +1,6 @@
 class WebhooksController < ApplicationController
     http_basic_authenticate_with name: "chargebee-joiner", password: ENV['CHARGEBEE_AUTH_PASSWORD']
-    skip_before_action :verify_authenticity_toke
+    skip_before_action :verify_authenticity_token
 
     PLAN_TIERS = {
         "joiner---mini" => "individual",
