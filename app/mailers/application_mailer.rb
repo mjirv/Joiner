@@ -17,4 +17,11 @@ class ApplicationMailer < ActionMailer::Base
       subject: "New beta signup"
     )
   end
+
+  def join_db_ready(user)
+    @user = user
+    mail(
+      to: "#{user.name} <#{user.email}>",
+      subject: "Your Joiner data warehouse is ready"
+    )
 end
