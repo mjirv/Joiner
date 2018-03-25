@@ -2,18 +2,12 @@
 
 <h2><%= @page_title %></h2>
 
-<p>Enter your name, email address, and a password to get started with Joiner!</p>
-  <%= form_for :user, url: '/users', class: 'form-horizontal center' do |f| %>
-    <p>
-      Name: <%= f.text_field :name, class: "form-input" %>
-      Email: <%= f.text_field :email, class: "form-input" %>
-    </p>
-    <br />
-    <p>
-      Password: <%= f.password_field :password, class: "form-input" %>
-      Password Confirmation: <%= f.password_field :password_confirmation, class: "form-input" %>
-    </p>
-    <%= f.submit "Submit", class: "btn btn-primary" %>
-
-  <% end %>
-</div>
+<p>Get started with Joiner!</p>
+<p class="h5">Annual</p>
+<a href="javascript:void(0)" data-cb-type="checkout" data-cb-plan-id="joiner--individual-annual" class="btn btn-primary">Individual ($47 per month)</a>
+<a href="javascript:void(0)" data-cb-type="checkout" data-cb-plan-id="joiner--team-annual" class="btn btn-success">Team ($227 per month)</a>
+<br /><br />
+<p class="h5">Monthly</p>
+<p>Annual subscriptions come with a month free. Click below for monthly instead.</p>
+<a href="javascript:void(0)" data-cb-type="checkout" data-cb-plan-id="joiner---mini" class="btn btn-link">Individual</a>
+<a href="javascript:void(0)" data-cb-type="checkout" data-cb-plan-id="joiner--team" class="btn btn-link">Team</a>

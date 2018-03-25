@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get '/signup' => 'users#new'
-  post '/users' => 'users#create'
+  #post '/users' => 'users#create'
   patch '/users/:id' => 'users#update', as: 'user'
   get '/' => 'users#show'
   get '/confirm_email.:token' => 'users#confirm_email', as: 'confirm_email_user'
