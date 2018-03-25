@@ -27,6 +27,8 @@ Joiner is deployed in production on Heroku using a Postgres database. Just deplo
 |SECRET_KEY_BASE         |_secret_                                           |
 |CHARGEBEE_AUTH_PASSWORD |_secret_                                           |
 |DATA_CB_SITE            |joiner-test (use "joiner" in production)           |
+|TEAM_LAUNCH_TEMPLATE    |leave blank unless needed; default value hardcoded |
+|IND_LAUNCH_TEMPLATE     |leave blank unless needed; default value hardcoded |
 
 You may need to run `budle exec rake db:migrate` via the Heroku console.
 
