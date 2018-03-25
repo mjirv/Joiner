@@ -1,5 +1,6 @@
 class WebhooksController < ApplicationController
     http_basic_authenticate_with name: "chargebee-joiner", password: ENV['CHARGEBEE_AUTH_PASSWORD']
+    skip_before_action :verify_authenticity_toke
 
     PLAN_TIERS = {
         "joiner---mini" => "individual",
@@ -22,7 +23,7 @@ class WebhooksController < ApplicationController
             # Create the account
             email = data["content"]["customer"]["email"]
             name = data["content"]["customer"]["billing_address"]["first_name"] + " " + data["content"]["customer"]["billing_address"]["last_name"]
-            plan = data["content"]["invoice"]["line_items"][0]["entity_id"]
+            plan = data["content"]["subscription"]["plan_id"]
             password = SecureRandom.urlsafe_base64.to_s
 
             tier = PLAN_TIERS[plan]
