@@ -115,4 +115,25 @@ module JoindbApi
             port: join_db.port
         )
     end
+
+    # Fetches all the tables that make up a certain RemoteDb
+    def get_tables(join_db, remote_db, password)
+
+    end
+
+    # Gets all columns in a table
+    def get_columns(join_db, remote_db, table_name, password)
+
+    end
+
+    # Creates a mapping table between two table columns
+    def create_mapping_table(join_db:, remote_db:, table_one:, column_one:,
+        table_two:, column_two:, password:)
+
+    end
+
+    # Dumps a table to CSV
+    def get_csv_from_table(join_db, remote_db, table_name, password)
+
+    end
 end
