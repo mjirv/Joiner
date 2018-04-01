@@ -116,24 +116,45 @@ module JoindbApi
         )
     end
 
-    # Fetches all the tables that make up a certain RemoteDb
+    # Fetches all the tablecnames that make up a certain RemoteDb
     def get_tables(join_db, remote_db, password)
-
+        if remote_db.csv?
+            return remote_db.name
+        end
+        
+        # Otherwise actually check the database
+        JoinDBApiMethods.get_tables(username: join_db.username, 
+            password: password, db_name: DB_NAME, db_host: join_db.host, 
+            port: join_db.port, schema: remote_db.get_schema
+        )
     end
 
     # Gets all columns in a table
     def get_columns(join_db, remote_db, table_name, password)
-
+        JoinDBApiMethods.get_columns(
+            username: join_db.username, password: password, db_name: DB_NAME, 
+            db_host: join_db.host, port: join_db.port, 
+            schema: remote_db.get_schema, table: table_name
+        )
     end
 
     # Creates a mapping table between two table columns
-    def create_mapping_table(join_db:, remote_db:, table_one:, column_one:,
-        table_two:, column_two:, password:)
-
+    def create_mapping_table(join_db:, remote_db_one:, table_one:, column_one:,
+        remote_db_two:, table_two:, column_two:, password:)
+        JoinDBApiMethods.create_mapping(username: join_db.username,
+            password: password, db_name: DB_NAME, db_host: join_db.host,
+            port: join_db.port, schema_one: remote_db_one.get_schema, 
+            schema_two: remote_db_two.get_schema, table_one: table_one, 
+            table_two: table_two, column_one: column_one, column_two: column_two
+        )
     end
 
-    # Dumps a table to CSV
-    def get_csv_from_table(join_db, remote_db, table_name, password)
-
+    # Dumps a table's data as an array of hashes
+    def get_table(join_db, remote_db, table_name, password)
+        # Get the raw results
+        JoinDBApiMethods.get_table(username: join_db.username,
+            password: password, db_name: DB_NAME, db_host: join_db.host,
+            port: join_db.port, schema: join_db.get_schema, table: table_name
+        )
     end
 end
