@@ -199,8 +199,8 @@ module JoindbApiMethods
     # Fetches all the tablecnames that make up a certain schema
     def get_tables(username:, password:, db_name:, db_host:, port:, schema:)
         conn = open_connection(db_name, db_host, username, password, port)
-        res = conn.exec("SELECT table_name FROM information_schema.tables 
-            WHERE table_schema = \'#{schema}\'")
+        res = conn.exec("SELECT foreign_table_name FROM information_schema.foreign_tables 
+            WHERE foreign_table_schema = \'#{schema}\'")
         conn.close()
         return res
     end

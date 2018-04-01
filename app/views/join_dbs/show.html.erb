@@ -1,4 +1,3 @@
-<h3 class="s-title"><%= @page_title %></h3>
 <!-- <%= link_to 'Edit', edit_join_db_path(@join_db.id) %> -->
 <div class="columns">
     <div class="column col-6 col-xs-12">
@@ -49,7 +48,7 @@
     <div class="column col-4 col-s-6 col-xs-12">
         <div class="card <%= rdb.db_type %>">
         <div class="card-header">
-            <div class="card-title h5"><%= rdb.name %></div>
+            <div class="card-title h5"><%= link_to rdb.name, remote_db_path(rdb) %></div>
             <div class="card-subtitle">
                 <div class="chip">
                     <%= rdb.db_type %>
@@ -65,18 +64,7 @@
             <div class="popover popover-right">
                 <button class="btn btn-secondary btn-sm">Info</button>
                     <div class="popover-container">
-                        <div class="card">
-                            <div class="card-body">
-                                <p>
-                                    <div class="tile tile-centered"><b>DB Type: </b><%= rdb.db_type %></div>
-                                    <div class="tile tile-centered"><b>Host: </b><%= rdb.host %></div>
-                                    <div class="tile tile-centered"><b>Port: </b><%= rdb.port %></div>
-                                    <div class="tile tile-centered"><b>DB Name: </b><%= rdb.database_name %></div>
-                                    <div class="tile tile-centered"><b>Schema: </b><%= rdb.schema %></div>
-                                    <div class="tile tile-centered"><b>Username: </b><%= rdb.remote_user %></div>
-                                </p>
-                            </div>
-                        </div>
+                        <%= render partial: 'remote_dbs/info', locals: {rdb: rdb} %>
                     </div>
                 </button>
             </div>

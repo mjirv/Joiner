@@ -116,17 +116,18 @@ module JoindbApi
         )
     end
 
-    # Fetches all the tablecnames that make up a certain RemoteDb
-    def get_tables(join_db, remote_db, password)
+    # Fetches all the tablenames that make up a certain RemoteDb
+    def self.get_tables(remote_db, password)
         if remote_db.csv?
-            return remote_db.name
+            return remote_db.table_name
         end
         
         # Otherwise actually check the database
+        join_db = remote_db.join_db
         JoinDBApiMethods.get_tables(username: join_db.username, 
             password: password, db_name: DB_NAME, db_host: join_db.host, 
             port: join_db.port, schema: remote_db.get_schema
-        )
+        ).to_a.map(&:values).flatten
     end
 
     # Gets all columns in a table
@@ -154,7 +155,7 @@ module JoindbApi
         # Get the raw results
         JoinDBApiMethods.get_table(username: join_db.username,
             password: password, db_name: DB_NAME, db_host: join_db.host,
-            port: join_db.port, schema: join_db.get_schema, table: table_name
+            port: join_db.port, schema: remote_db.get_schema, table: table_name
         )
     end
 end

@@ -19,6 +19,15 @@ class RemoteDb < ApplicationRecord
     end
   end
 
+  def get_schema
+    get_join_db_schema_name.downcase
+  end
+
+  def get_tables(password)
+    # Return an array of table names
+    JoindbApi.get_tables(self, password)
+  end
+
   def disable
     self.status = RemoteDb.statuses[:disabled]
     self.save

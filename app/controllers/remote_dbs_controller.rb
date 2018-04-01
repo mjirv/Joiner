@@ -8,14 +8,15 @@ class RemoteDbsController < ApplicationController
     before_action only: [:create] do
         authorize_owner(remote_db_params[:join_db_id].to_i)
     end
-    before_action :confirm_join_db_password, only: [:edit, :update, :destroy]
+    before_action :confirm_join_db_password, only: [:edit, :update, :destroy, :show]
     before_action only: [:create] do
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
     end
     before_action :show_notifications, only: [:show, :edit, :new]
 
     def show
-        # Show RemoteDb details
+        @page_title = "Connection: #{@remote_db.name}"
+        @tables = @remote_db.get_tables(session[:join_db_password])
     end
 
     def new
