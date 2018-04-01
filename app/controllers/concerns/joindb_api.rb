@@ -139,7 +139,7 @@ module JoindbApi
     end
 
     # Creates a mapping table between two table columns
-    def create_mapping_table(join_db:, remote_db_one:, table_one:, column_one:,
+    def create_mapping(join_db:, remote_db_one:, table_one:, column_one:,
         remote_db_two:, table_two:, column_two:, password:)
         JoinDBApiMethods.create_mapping(username: join_db.username,
             password: password, db_name: DB_NAME, db_host: join_db.host,
