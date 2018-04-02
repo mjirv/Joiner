@@ -240,7 +240,7 @@ module JoindbApiMethods
     def get_table(username:, password:, db_name:, db_host:, port:, schema:,
         table:)
         conn = open_connection(db_name, db_host, username, password, port)
-        res = conn.exec("SELECT * FROM #{schema}.#{table}")
+        res = conn.exec("SELECT * FROM #{schema}.#{table} LIMIT 10")
         conn.close()
 
         return res

@@ -1,0 +1,16 @@
+<table class="table table-striped table-hover table-scroll">
+    <thead><tr>
+        <% @columns.each do |c| %>
+            <th><%= c %></th>
+        <% end %>
+    </tr></thead>
+    <tbody>
+        <% @values.each do |row| %>
+            <tr>
+                <% row.each do |v| %>
+                    <td><%= v %></td>
+                <% end %>
+            </tr>
+        <% end %>
+    </tbody>
+</table>

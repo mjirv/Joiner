@@ -1,18 +1,18 @@
 class RemoteDbsController < ApplicationController
     before_action :authorize
-    before_action :set_remote_db, only: [:show, :update, :edit, :destroy]    
-    before_action :authorize_owner, only: [:show, :edit, :update, :destroy]
+    before_action :set_remote_db, only: [:show, :update, :edit, :destroy, :show_table]    
+    before_action :authorize_owner, only: [:show, :edit, :update, :destroy, :show_table]
     before_action only: [:new] do
         authorize_owner(params[:join_db])
     end
     before_action only: [:create] do
         authorize_owner(remote_db_params[:join_db_id].to_i)
     end
-    before_action :confirm_join_db_password, only: [:edit, :update, :destroy, :show]
+    before_action :confirm_join_db_password, only: [:edit, :update, :destroy, :show, :show_table]
     before_action only: [:create] do
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
     end
-    before_action :show_notifications, only: [:show, :edit, :new]
+    before_action :show_notifications, only: [:show, :edit, :new, :show_table]
 
     def show
         @page_title = "Connection: #{@remote_db.name}"
@@ -164,6 +164,13 @@ class RemoteDbsController < ApplicationController
                     #{e}"
             )
         end
+    end
+
+    def show_table
+        @page_title = "Table: #{@remote_db.get_schema}.#{params[:table_name]}"
+        table = get_table(@remote_db, params[:table_name], session[:join_db_password])
+        @columns = table[0].keys
+        @values = table.map(&:values)
     end
 
     private

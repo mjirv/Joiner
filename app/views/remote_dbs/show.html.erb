@@ -2,11 +2,11 @@
 <%= render partial: 'remote_dbs/info', locals: {rdb: @remote_db} %>
 <br/>
 <h5>Tables</h5>
-<table class="table table-striped table-hover">
-    <thead><tr><th>Name</th></tr></thead>
+<table class="table table-striped table-hover table-scroll">
+    <thead><tr><th>Name</th><th>Actions</th></tr></thead>
     <tbody>
         <% @tables.each do |t| %>
-            <tr><td><%= t %></td></tr>
+            <tr><td><%= t %></td><td><%= link_to "View", show_table_path(@remote_db, t) %></td></tr>
         <% end %>
     </tbody>
 </table>
