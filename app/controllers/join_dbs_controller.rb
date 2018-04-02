@@ -56,7 +56,7 @@ class JoinDbsController < ApplicationController
 
     # GET /joindb/new
     def new
-        @page_title = "New JoinDB"
+        @page_title = "New Warehouse"
         # Form for getting info to create the new JoinDb
         @user_id = current_user.id
         @join_db = JoinDb.new
@@ -85,7 +85,7 @@ class JoinDbsController < ApplicationController
             rescue do |reason|
                 create_error_notification(
                     current_user.id,
-                    "Error creating your JoinDb. Please try again in a
+                    "Error creating your Warehouse. Please try again in a
                     few minutes. Error was: #{reason}"
                 )
                 @join_db.destroy
@@ -99,7 +99,7 @@ class JoinDbsController < ApplicationController
 
     # UPDATE /join_dbs/:id
     def edit 
-        @page_title = "Rename JoinDB"     
+        @page_title = "Rename Warehouse"     
     end
 
     def update
