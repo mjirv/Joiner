@@ -16,6 +16,7 @@
                 <%= select_tag :remote_db_two,
                     options_for_select(@remote_dbs.collect{ |rdb| [rdb.name, rdb.id] }),
                     {class: 'form-select'} %>
+                <%= hidden_field_tag :join_db, @join_db_id %>
             </div>
         </div>
         <br />
