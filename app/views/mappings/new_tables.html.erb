@@ -11,6 +11,7 @@
                     options_for_select(@table_two_options.collect{|table| [table, table]}), 
                     {class: 'form-select'} %>
 
+                <%= hidden_field_tag :name, @name %>
                 <%= hidden_field_tag :join_db, @join_db_id %>
                 <%= hidden_field_tag :remote_db_one, @remote_db_one.id %>
                 <%= hidden_field_tag :remote_db_two, @remote_db_two.id %>

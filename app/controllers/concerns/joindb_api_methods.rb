@@ -224,7 +224,7 @@ module JoindbApiMethods
         conn = open_connection(db_name, db_host, username, password, port)
         conn.exec("CREATE EXTENSION IF NOT EXISTS fuzzystrmatch")
 
-        new_table_name = "mapping_#{table_one}_#{table_two}"
+        new_table_name = "mapping_#{table_one}_#{column_one}_#{table_two}_#{column_two}"
         conn.exec("CREATE TABLE #{new_table_name} AS
             SELECT #{schema_one}.#{table_one}.#{column_one},
             #{schema_two}.#{table_two}.#{column_two}

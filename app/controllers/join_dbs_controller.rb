@@ -53,7 +53,7 @@ class JoinDbsController < ApplicationController
                 RemoteDb.statuses[:provisioning]]
         )
 
-        @mappings = []
+        @mappings = Mapping.where(join_db_id: params[:id])
     end
 
     # GET /joindb/new
