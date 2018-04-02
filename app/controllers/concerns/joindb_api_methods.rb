@@ -238,9 +238,10 @@ module JoindbApiMethods
 
     # Dumps a table's data as an array of hashes
     def get_table(username:, password:, db_name:, db_host:, port:, schema:,
-        table:)
+        table:, limit:)
+        limit_clause = limit ? "LIMIT #{limit}" : ""
         conn = open_connection(db_name, db_host, username, password, port)
-        res = conn.exec("SELECT * FROM #{schema}.#{table} LIMIT 10")
+        res = conn.exec("SELECT * FROM #{schema}.#{table} #{limit_clause}")
         conn.close()
 
         return res

@@ -151,12 +151,12 @@ module JoindbApi
     end
 
     # Dumps a table's data as an array of hashes
-    def get_table(remote_db, table_name, password)
+    def get_table(remote_db, table_name, password, limit=10)
         join_db = remote_db.join_db
         # Get the raw results
         JoinDBApiMethods.get_table(username: join_db.username,
             password: password, db_name: DB_NAME, db_host: join_db.host,
-            port: join_db.port, schema: remote_db.get_schema, table: table_name
+            port: join_db.port, schema: remote_db.get_schema, table: table_name, limit: limit
         ).to_a
     end
 end

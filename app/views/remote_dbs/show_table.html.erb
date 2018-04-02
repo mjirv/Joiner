@@ -1,3 +1,5 @@
+<p><%= link_to "Download as CSV", download_table_path(@remote_db, @table_name), class: "btn btn-primary" %></p>
+<h5>Sample (first 10 rows):</h5>
 <table class="table table-striped table-hover table-scroll">
     <thead><tr>
         <% @columns.each do |c| %>
