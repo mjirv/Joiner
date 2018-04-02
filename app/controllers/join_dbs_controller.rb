@@ -52,6 +52,8 @@ class JoinDbsController < ApplicationController
             status: [RemoteDb.statuses[:enabled],
                 RemoteDb.statuses[:provisioning]]
         )
+
+        @mappings = []
     end
 
     # GET /joindb/new

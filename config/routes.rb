@@ -35,6 +35,11 @@ Rails.application.routes.draw do
   get 'remote_dbs/:id/show_table/:table_name' => 'remote_dbs#show_table', as: 'show_table'
   get 'remote_dbs/:id/download_table/:table_name' => 'remote_dbs#download_table', as: 'download_table', defaults: {format: :csv}
 
+  # Mapping routes
+  get 'mappings/new' => 'mappings#new'
+  post '/mappings' => 'mappings#create'
+  get 'mappings/:id/download' => 'mappings#download_table', as: 'download_mapping', defaults: {format: :csv}
+
   # Webhook routes for Chargebee events
   post '/subscription_events' => 'webhooks#subscription_events'
 end

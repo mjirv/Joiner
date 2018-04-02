@@ -1,5 +1,45 @@
 <%= render partial: 'join_dbs/menu', locals: {overview_active: '', connections_active: '', mapping_active: 'active'} %>
-
-<!-- Blurb about what this is -->
+<br />
+<div class="columns">
+    <!-- Blurb about what this is -->
+    <div class="column col-6 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title h5">Info</div>
+            </div>
+            <div class="card-body">
+                <p>Joiner can automatically create mappings between tables based on similar columns. Use the mapping table to do joins in your Warehouse, or download it to CSV to use in Excel!</p>
+            </div>
+        </div>
+    </div>
+    <!-- Add mappings -->
+    <div class="column col-6 col-xs-12">
+                <div class="card">
+            <div class="card-header">
+                <div class="card-title h5">Add Mapping</div>
+            </div>
+            <div class="card-body">
+                <%= link_to 'New', mappings_new_path(join_db: @join_db.id), method: :get, class: "btn btn-success" %>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
 <!-- Show current mappings -->
-<!-- Add mappings -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title h5">Mappings</div>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead><tr>
+                <th>Name</th><th>Table 1</th><th>Column 1</th><th>Table 2</th><th>Column 2</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+                <% @mappings.each do |mapping| %>
+                    <tr><td><%= mapping.nickname %></td><td><%= mapping.table_one %></td><td><%= mapping.column_one %></td><td><%= mapping.table_two %></td><td><%= mapping.column_two %></td><td><%= link_to 'Download', '' %></td>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>
