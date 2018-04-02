@@ -24,4 +24,5 @@ class ApplicationMailer < ActionMailer::Base
       to: "#{user.name} <#{user.email}>",
       subject: "Your Joiner data warehouse is ready"
     )
+  end
 end
