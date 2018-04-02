@@ -115,4 +115,49 @@ module JoindbApi
             port: join_db.port
         )
     end
+
+    # Fetches all the tablenames that make up a certain RemoteDb
+    def self.get_tables(remote_db, password)
+        if remote_db.csv?
+            return [remote_db.table_name]
+        end
+        
+        # Otherwise actually check the database
+        join_db = remote_db.join_db
+        JoinDBApiMethods.get_tables(username: join_db.username, 
+            password: password, db_name: DB_NAME, db_host: join_db.host, 
+            port: join_db.port, schema: remote_db.get_schema
+        ).to_a.map(&:values).flatten
+    end
+
+    # Gets all columns in a table
+    def get_columns(join_db, remote_db, table_name, password)
+        join_db = remote_db.join_db
+        # Get the raw results
+        JoinDBApiMethods.get_table(username: join_db.username,
+            password: password, db_name: DB_NAME, db_host: join_db.host,
+            port: join_db.port, schema: remote_db.get_schema, table: table_name, limit: 1
+        ).to_a[0].keys.map(&:to_s)
+    end
+
+    # Creates a mapping table between two table columns
+    def create_mapping(join_db:, remote_db_one:, table_one:, column_one:,
+        remote_db_two:, table_two:, column_two:, password:)
+        JoinDBApiMethods.create_mapping(username: join_db.username,
+            password: password, db_name: DB_NAME, db_host: join_db.host,
+            port: join_db.port, schema_one: remote_db_one.get_schema, 
+            schema_two: remote_db_two.get_schema, table_one: table_one, 
+            table_two: table_two, column_one: column_one, column_two: column_two
+        )
+    end
+
+    # Dumps a table's data as an array of hashes
+    def get_table(remote_db, table_name, password, limit=10)
+        join_db = remote_db.join_db
+        # Get the raw results
+        JoinDBApiMethods.get_table(username: join_db.username,
+            password: password, db_name: DB_NAME, db_host: join_db.host,
+            port: join_db.port, schema: remote_db.get_schema, table: table_name, limit: limit
+        ).to_a
+    end
 end

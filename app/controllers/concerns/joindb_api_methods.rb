@@ -196,6 +196,57 @@ module JoindbApiMethods
         conn.close()
     end
 
+    # Fetches all the tablecnames that make up a certain schema
+    def get_tables(username:, password:, db_name:, db_host:, port:, schema:)
+        conn = open_connection(db_name, db_host, username, password, port)
+        res = conn.exec("SELECT foreign_table_name FROM information_schema.foreign_tables 
+            WHERE foreign_table_schema = \'#{schema}\'")
+        conn.close()
+        return res
+    end
+
+    # Gets all columns in a table
+    def get_columns(username:, password:, db_name:, db_host:, port:, schema:, 
+        table:)
+        conn = open_connection(db_name, db_host, username, password, port)
+        res = conn.exec("SELECT * FROM #{schema}.#{table} LIMIT 1")
+
+        # The result is an array of key-value hashes, with each hash a row
+        columns = res[0].keys.map(&:to_s)
+        conn.close()
+        return columns
+    end
+
+    # Creates a mapping table between two table columns
+    def create_mapping(username:, password:, db_name:, db_host:, port:, 
+        schema_one:, schema_two:, table_one:, table_two:, column_one:,
+        column_two:)
+        conn = open_connection(db_name, db_host, username, password, port)
+        conn.exec("CREATE EXTENSION IF NOT EXISTS fuzzystrmatch")
+
+        new_table_name = "mapping_#{table_one}_#{column_one}_#{table_two}_#{column_two}"
+        conn.exec("CREATE TABLE #{new_table_name} AS
+            SELECT #{schema_one}.#{table_one}.#{column_one},
+            #{schema_two}.#{table_two}.#{column_two}
+            FROM #{schema_one}.#{table_one}
+            INNER JOIN #{schema_two}.#{table_two}
+            ON metaphone(#{schema_one}.#{table_one}.#{column_one}, 4)
+              = metaphone(#{schema_two}.#{table_two}.#{column_two}, 4)")
+        conn.close()
+        return new_table_name
+    end
+
+    # Dumps a table's data as an array of hashes
+    def get_table(username:, password:, db_name:, db_host:, port:, schema:,
+        table:, limit:)
+        limit_clause = limit ? "LIMIT #{limit}" : ""
+        conn = open_connection(db_name, db_host, username, password, port)
+        res = conn.exec("SELECT * FROM #{schema}.#{table} #{limit_clause}")
+        conn.close()
+
+        return res
+    end
+
     private
     def add_remote_csv(files:, username:, password:, db_name:, port:, db_host:)
         table_name = nil

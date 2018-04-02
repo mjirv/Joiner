@@ -50,7 +50,7 @@ class UsersController < ApplicationController
     end
 
     def show
-        @page_title = "Your JoinDBs"
+        @page_title = "Your Warehouses"
         @join_dbs = JoinDb.where(
             user_id: session[:user_id],
             status: JoinDb.statuses[:enabled]

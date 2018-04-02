@@ -1,21 +1,24 @@
 class RemoteDbsController < ApplicationController
+    require 'csv'
+
     before_action :authorize
-    before_action :set_remote_db, only: [:show, :update, :edit, :destroy]    
-    before_action :authorize_owner, only: [:show, :edit, :update, :destroy]
+    before_action :set_remote_db, only: [:show, :update, :edit, :destroy, :show_table, :download_table]    
+    before_action :authorize_owner, only: [:show, :edit, :update, :destroy, :show_table, :download_table]
     before_action only: [:new] do
         authorize_owner(params[:join_db])
     end
     before_action only: [:create] do
         authorize_owner(remote_db_params[:join_db_id].to_i)
     end
-    before_action :confirm_join_db_password, only: [:edit, :update, :destroy]
+    before_action :confirm_join_db_password, only: [:edit, :update, :destroy, :show, :show_table, :download_table]
     before_action only: [:create] do
         confirm_join_db_password(remote_db_params[:join_db_id].to_i)
     end
-    before_action :show_notifications, only: [:show, :edit, :new]
+    before_action :show_notifications, only: [:show, :edit, :new, :show_table]
 
     def show
-        # Show RemoteDb details
+        @page_title = "Connection: #{@remote_db.name}"
+        @tables = @remote_db.get_tables(session[:join_db_password])
     end
 
     def new
@@ -162,6 +165,32 @@ class RemoteDbsController < ApplicationController
                 "Could not delete your connection:
                     #{e}"
             )
+        end
+    end
+
+    def show_table
+        @table_name = params[:table_name]
+        @page_title = "Table: #{@remote_db.get_schema}.#{@table_name}"
+        table = get_table(@remote_db, @table_name, session[:join_db_password])
+        @columns = table[0].keys
+        @values = table.map(&:values)
+    end
+
+    def download_table
+        table = get_table(@remote_db, params[:table_name], session[:join_db_password], nil)
+
+        columns = table[0].keys
+        values = table.map(&:values)
+        table_as_csv = CSV.generate(headers: true) do |csv|
+            csv << columns
+      
+            values.each do |row|
+              csv << row
+            end
+        end
+
+        respond_to do |format|
+            format.csv { send_data table_as_csv, filename: "table-#{params[:table_name]}-#{Date.today}.csv" }
         end
     end
 

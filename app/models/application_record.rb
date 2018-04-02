@@ -1,4 +1,4 @@
 class ApplicationRecord < ActiveRecord::Base
-  include JoindbApi
+  extend JoindbApi
   self.abstract_class = true
 end

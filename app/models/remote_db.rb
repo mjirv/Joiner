@@ -12,11 +12,22 @@ class RemoteDb < ApplicationRecord
     if: -> record { record.postgres? or record.redshift? }
 
   def get_join_db_schema_name
-    if self.postgres? or self.redshift?
+    if self.csv?
+      "import"
+    elsif self.postgres? or self.redshift?
       "#{self.database_name}_#{self.schema}"
     else
       "#{self.database_name}"
     end
+  end
+
+  def get_schema
+    get_join_db_schema_name.downcase
+  end
+
+  def get_tables(password)
+    # Return an array of table names
+    JoindbApi.get_tables(self, password)
   end
 
   def disable
