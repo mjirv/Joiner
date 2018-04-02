@@ -61,6 +61,29 @@ class MappingsController < ApplicationController
         # TODO: make sure to validate that the owner is the right person
     end
 
+    def download_mapping
+        mapping = Mapping.find(params[:id])
+        table_name = mapping.get_table_name
+
+        # TODO: This logic is duplicated by the download CSV function for
+        # regular tables. DRY it.
+        table = get_table(mapping, table_name, session[:join_db_password], nil)
+
+        columns = table[0].keys
+        values = table.map(&:values)
+        table_as_csv = CSV.generate(headers: true) do |csv|
+            csv << columns
+      
+            values.each do |row|
+              csv << row
+            end
+        end
+
+        respond_to do |format|
+            format.csv { send_data table_as_csv, filename: "#{table_name}-#{Date.today}.csv" }
+        end
+    end
+
     private
     def mapping_params
         params.require(:mapping).permit(:join_db_id, :remote_db_one, :remote_db_two, :table_one, :column_one, :table_two, :column_two, :user_id, :name)

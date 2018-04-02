@@ -6,4 +6,12 @@ class Mapping < ApplicationRecord
     VALIDATABLE_ATTRS = Mapping.attribute_names.reject{|attr| NON_VALIDATABLE_ATTRS.include?(attr)}  
 
     validates_presence_of VALIDATABLE_ATTRS
+
+    def get_schema
+        'public'
+    end
+
+    def get_table_name
+        "mapping_#{table_one}_#{column_one}_#{table_two}_#{column_two}"
+    end
 end
