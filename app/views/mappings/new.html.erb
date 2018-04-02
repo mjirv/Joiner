@@ -1,48 +1,24 @@
 <div class="form-group">
-    <%= form_for @mapping do |form| %>
+    <%= form_tag mappings_new_tables_path, method: :get do |form| %>
         <div class='form-group'>
             <div class="column col-9 col-sm-12">
-                <%= form.label :name, class: 'form-label' %>
-                <%= form.text_field :name, class: 'form-input' %>
+                <%= label_tag :name, 'Name', {class: 'form-label'} %>
+                <%= text_field_tag :name, '', {class: 'form-input'} %>
             </div>
         </div>
         <div class='form-group'>
             <div class="column col-9 col-sm-12">
-                <%= form.label :remote_db_one, 'First Connection', class: 'form-label' %>
-                <%= form.select(:remote_db_one,
-                    @remote_dbs.map{|rdb| [rdb.name, rdb.id]}, 
-                    {}, {class: 'form-select'}) %>
-                <%= form.label :remote_db_one, 'Second Connection', class: 'form-label' %>
-                <%= form.select(:remote_db_one,
-                    @remote_dbs.map{|rdb| [rdb.name, rdb.id]}, 
-                    {}, {class: 'form-select'}) %>
-            </div>
-        </div>
-                <div class='form-group'>
-            <div class="column col-9 col-sm-12">
-                <%= form.label :table_one, 'First Table', class: 'form-label' %>
-                <%= form.select(:table_one,
-                    @tables.map{|table| [table, table]}, 
-                    {}, {class: 'form-select'}) %>
-                <%= form.label :remote_db_one, 'Second Table', class: 'form-label' %>
-                <%= form.select(:remote_db_one,
-                    @tables.map{|table| [table, table]}, 
-                    {}, {class: 'form-select'}) %>
-            </div>
-        </div>
-                <div class='form-group'>
-            <div class="column col-9 col-sm-12">
-                <%= form.label :remote_db_one, 'First Connection', class: 'form-label' %>
-                <%= form.select(:remote_db_one,
-                    @remote_dbs.map{|rdb| [rdb.name, rdb.id]}, 
-                    {}, {class: 'form-select'}) %>
-                <%= form.label :remote_db_one, 'Second Connection', class: 'form-label' %>
-                <%= form.select(:remote_db_one,
-                    @remote_dbs.map{|rdb| [rdb.name, rdb.id]}, 
-                    {}, {class: 'form-select'}) %>
+                <%= label_tag :remote_db_one, 'First Connection', class: 'form-label' %>
+                <%= select_tag :remote_db_one,
+                    options_for_select(@remote_dbs.collect{ |rdb| [rdb.name, rdb.id] }),
+                    {class: 'form-select'} %>
+                <%= label_tag :remote_db_two, 'Second Connection', class: 'form-label' %>
+                <%= select_tag :remote_db_two,
+                    options_for_select(@remote_dbs.collect{ |rdb| [rdb.name, rdb.id] }),
+                    {class: 'form-select'} %>
             </div>
         </div>
         <br />
-        <%= form.submit class: "button", class: 'btn btn-success' %>
+        <%= submit_tag 'Next', class: 'btn btn-success' %>
     <% end %>
 </div>

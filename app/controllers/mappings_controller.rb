@@ -21,10 +21,19 @@ class MappingsController < ApplicationController
         @join_db_id = params[:join_db].to_i
         confirm_join_db_password(@join_db_id)
 
-        @join_db = JoinDb.find(@join_db_id)
         @remote_dbs = RemoteDb.where(join_db_id: @join_db_id, status: 'enabled')
         @tables = @remote_dbs.map{|rdb| rdb.get_tables(session[:join_db_password])}
         @mapping = Mapping.new
+    end
+
+    def new_tables
+        @join_db_id = params[:join_db_id].to_i
+        confirm_join_db_password(@join_db_id)
+
+        @remote_db_one = RemoteDb.find(params[:remote_db_one])
+        @table_one_options = @remote_db_one.get_tables(session[:join_db_password])
+        @remote_db_two = RemoteDb.find(params[:remote_db_two])
+        @table_two_options = @remote_db_two.get_tables(session[:join_db_password])
     end
 
     private
