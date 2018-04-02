@@ -1,0 +1,35 @@
+<h3>Connections</h3>
+<div class="columns">
+<% @remote_dbs.each do |rdb| %>
+    <div class="column col-4 col-s-6 col-xs-12">
+        <div class="card <%= rdb.db_type %>">
+        <div class="card-header">
+            <div class="card-title h5"><%= link_to rdb.name, remote_db_path(rdb) %></div>
+            <div class="card-subtitle">
+                <div class="chip">
+                    <%= rdb.db_type %>
+                </div>
+                <% if rdb.table_name or (not rdb.csv? and rdb.get_join_db_schema_name) %>
+                    <p>
+                        <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
+                    </p>
+                <% end %>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="popover popover-right">
+                <button class="btn btn-secondary btn-sm">Info</button>
+                    <div class="popover-container">
+                        <%= render partial: 'remote_dbs/info', locals: {rdb: rdb} %>
+                    </div>
+                </button>
+            </div>
+            <div class="btn-group">
+            <%= button_to 'Refresh Schema', refresh_remote_db_path(rdb.id), method: :post, class: "btn btn-primary btn-sm" %>
+            <%= link_to 'Delete', delete_remote_db_path(rdb.id), {class: "btn btn-error btn-sm"} %>
+            </div>
+        </div>
+    </div>
+    </div>
+<% end %>
+</div>

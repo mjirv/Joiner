@@ -16,6 +16,7 @@
       <% if flash[:success] %>
         <div class="toast toast-success"><%= flash[:success] %></div>
       <% end %>
+      <h3 class="s-title"><%= @page_title %></h3>
       <%= yield %>
     </div>
   </body>

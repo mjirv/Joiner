@@ -1,0 +1,26 @@
+<div class="form-group">
+    <%= form_for @mapping do |form| %>
+        <div class='form-group'>
+            <div class="column col-9 col-sm-12">
+                <%= form.label :column_one, 'First Column', class: 'form-label' %>
+                <%= form.select :column_one,
+                    @column_one_options.map{|column| [column, column]}, 
+                    {}, {class: 'form-select'} %>
+                <%= form.label :column_two, 'Second Column', class: 'form-label' %>
+                <%= form.select :column_two,
+                    @column_two_options.map{|column| [column, column]}, 
+                    {}, {class: 'form-select'} %>
+
+                <%= form.hidden_field :name, value: @name %>
+                <%= form.hidden_field :user_id, value: current_user.id %>
+                <%= form.hidden_field :join_db_id, value: @join_db_id %>
+                <%= form.hidden_field :remote_db_one, value: @remote_db_one.id %>
+                <%= form.hidden_field :remote_db_two, value: @remote_db_two.id %>
+                <%= form.hidden_field :table_one, value: @table_one %>
+                <%= form.hidden_field :table_two, value: @table_two %>
+            </div>
+        </div>
+        <br />
+        <%= form.submit "Next", class: 'btn btn-success' %>
+    <% end %>
+</div>

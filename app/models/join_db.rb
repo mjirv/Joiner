@@ -29,6 +29,12 @@ class JoinDb < ApplicationRecord
         # TODO: Make this a callback based on success of create_join_db()
         sleep(120)
         add_user(username, password, self)
+
+        # Let them know it's ready
+        user = User.find(self.user_id)
+        Concurrent::Future.execute{ 
+            ApplicationMailer.join_db_ready(user).deliver
+        }
     end
 
     def disable

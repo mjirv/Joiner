@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   get '/join_dbs/:id/delete' => 'join_dbs#destroy', as: 'delete_join_db'
   get '/join_dbs/:id/confirm' => 'join_dbs#confirm_password_view', as: 'confirm_join_db_password'
   post '/confirm_join_db_password' => 'join_dbs#confirm_password'
+  get '/join_dbs/:id/connections' => 'join_dbs#show_connections', as: 'join_db_connections'
+  get '/join_dbs/:id/mappings' => 'join_dbs#show_mappings', as: 'join_db_mappings'
 
   #RemoteDb routes
   get 'remote_dbs/new' => 'remote_dbs#new'
@@ -30,6 +32,15 @@ Rails.application.routes.draw do
   patch '/remote_dbs/:id' => 'remote_dbs#update'
   get '/remote_dbs/:id/delete' => 'remote_dbs#destroy', as: 'delete_remote_db'
   post '/refresh_remote_db/:id' => 'remote_dbs#refresh', as: 'refresh_remote_db'
+  get 'remote_dbs/:id/show_table/:table_name' => 'remote_dbs#show_table', as: 'show_table'
+  get 'remote_dbs/:id/download_table/:table_name' => 'remote_dbs#download_table', as: 'download_table', defaults: {format: :csv}
+
+  # Mapping routes
+  get 'mappings/new' => 'mappings#new'
+  get 'mappings/new_tables' => 'mappings#new_tables'
+  get 'mappings/new_columns' => 'mappings#new_columns'
+  post '/mappings' => 'mappings#create'
+  get 'mappings/:id/download' => 'mappings#download_mapping', as: 'download_mapping', defaults: {format: :csv}
 
   # Webhook routes for Chargebee events
   post '/subscription_events' => 'webhooks#subscription_events'
