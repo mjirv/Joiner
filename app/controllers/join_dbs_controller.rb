@@ -1,17 +1,17 @@
 class JoinDbsController < ApplicationController
     before_action :authorize
-    before_action :set_join_db, only: [:show, :update, :edit, :destroy, :confirm_password_view]
-    before_action :authorize_owner, only: [:show, :update, :edit, :destroy]
+    before_action :set_join_db, only: [:show, :update, :edit, :destroy, :confirm_password_view, :show_connections, :show_mappings]
+    before_action :authorize_owner, only: [:show, :update, :edit, :destroy, :show_connections, :show_mappings]
     before_action :show_notifications
     before_action :check_trial_joindb_limit, only: [:new, :create]
-    before_action only: [:show, :update] do
+    before_action only: [:show, :update, :show_connections, :show_mappings] do
         join_db_id = params[:id].to_i
         if not JoinDb.find(join_db_id).provisioning?
             confirm_join_db_password(join_db_id)
         end
     end
 
-    # GET /joindb/:id
+    # Overview page for single JoinDb
     def show
         # Session management so we don't have to keep asking them for their JoinDB password
         if session[:join_db_id] != params[:id].to_i
@@ -19,7 +19,7 @@ class JoinDbsController < ApplicationController
             session[:join_db_password] = nil
         end
 
-        @page_title = "Your JoinDb - #{JoinDb.find(params[:id]).name}"
+        @page_title = "Your Warehouse: #{JoinDb.find(params[:id]).name}"
 
         # Show RemoteDbs
         @remote_dbs = RemoteDb.where(
@@ -28,6 +28,30 @@ class JoinDbsController < ApplicationController
                 RemoteDb.statuses[:provisioning]]
         )
         @new_rdb = RemoteDb.new
+    end
+
+    # Shows info about a JoinDb's connections
+    def show_connections
+        @page_title = "Your Warehouse: #{JoinDb.find(params[:id]).name}"
+
+        # Show RemoteDbs
+        @remote_dbs = RemoteDb.where(
+            join_db_id: params[:id],
+            status: [RemoteDb.statuses[:enabled],
+                RemoteDb.statuses[:provisioning]]
+        )
+        @new_rdb = RemoteDb.new
+    end
+
+    def show_mappings
+        @page_title = "Your Warehouse: #{JoinDb.find(params[:id]).name}"
+
+        # Show RemoteDbs
+        @remote_dbs = RemoteDb.where(
+            join_db_id: params[:id],
+            status: [RemoteDb.statuses[:enabled],
+                RemoteDb.statuses[:provisioning]]
+        )
     end
 
     # GET /joindb/new

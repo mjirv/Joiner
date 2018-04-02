@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header">
+        <div class="card-title h5">Add Connections</div>
+    </div>
+    <div class="card-body">
+        <% if @join_db.provisioning? %>
+            <p>You will be able to add connections here once your JoinDb is done provisioning (usually 4-5 minutes).</p>
+        <% else %>
+            <div>
+                <p>
+                <b>Database:</b>
+                <br />
+                <%= link_to 'Add Database', remote_dbs_new_path(join_db: @join_db.id), class: "btn btn-success" %>
+                </p>
+                <p>
+                <b>CSV:</b>
+                <br />
+                <%= form_for @new_rdb do |f| %>
+                    <%= f.file_field :csv, accept: 'text/csv' %>
+                    <%= f.hidden_field :db_type, value: "csv" %>
+                    <%= f.hidden_field :join_db_id, value: @join_db.id %>
+                    <%= f.submit 'Add CSV', class: "btn btn-success" %>
+                <% end %>
+                </p>
+            </div>
+        <% end %>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<ul class="tab">
+  <li class="tab-item <%= overview_active %>">
+    <%= link_to 'Overview', join_db_path(@join_db) %>
+  </li>
+  <li class="tab-item <%= connections_active %>">
+    <%= link_to 'Connections', join_db_connections_path(@join_db) %>
+  </li>
+  <li class="tab-item <%= mapping_active %>">
+    <%= link_to 'Mappings', join_db_mappings_path(@join_db) %>
+  </li>
+</ul>
