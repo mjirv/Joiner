@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   # Mapping routes
   get 'mappings/new' => 'mappings#new'
   get 'mappings/new_tables' => 'mappings#new_tables'
+  get 'mappings/new_columns' => 'mappings#new_columns'
   post '/mappings' => 'mappings#create'
   get 'mappings/:id/download' => 'mappings#download_table', as: 'download_mapping', defaults: {format: :csv}
 

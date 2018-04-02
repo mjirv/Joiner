@@ -132,11 +132,12 @@ module JoindbApi
 
     # Gets all columns in a table
     def get_columns(join_db, remote_db, table_name, password)
-        JoinDBApiMethods.get_columns(
-            username: join_db.username, password: password, db_name: DB_NAME, 
-            db_host: join_db.host, port: join_db.port, 
-            schema: remote_db.get_schema, table: table_name
-        )
+        join_db = remote_db.join_db
+        # Get the raw results
+        JoinDBApiMethods.get_table(username: join_db.username,
+            password: password, db_name: DB_NAME, db_host: join_db.host,
+            port: join_db.port, schema: remote_db.get_schema, table: table_name, limit: 1
+        ).to_a[0].keys.map(&:to_s)
     end
 
     # Creates a mapping table between two table columns
