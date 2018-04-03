@@ -25,13 +25,20 @@ class JoinDb < ApplicationRecord
         end
 
         # Loop until we can connect via postgres and create the user
-        while true
-            # Try to connect
+        tries = 0
+        while tries <= 100
+            # If we've gotten to 100 tries, something has gone wrong. Raise the error.
+            if tries == 100
+                JoinDbApi.add_user(username, password, self)
+            end
+
+            # Otherwise keep tring to connect until we get there
             begin
                 JoindbApi.add_user(username, password, self)
             rescue PG::ConnectionBad
                 # If we get an error about the server not running, keep trying
                 sleep(10) 
+                tries += 1
             else
                 break
             end
