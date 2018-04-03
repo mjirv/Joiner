@@ -28,7 +28,7 @@ class JoinDb < ApplicationRecord
         # Wait a while to make sure this works
         # TODO: Make this a callback based on success of create_join_db()
         sleep(120)
-        add_user(username, password, self)
+        JoinDbApi.add_user(username, password, self)
 
         # Let them know it's ready
         user = User.find(self.user_id)
