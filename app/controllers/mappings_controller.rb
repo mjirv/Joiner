@@ -1,4 +1,15 @@
 class MappingsController < ApplicationController
+    before_action :authorize
+    before_action only: [:create] do
+        authorize_owner(mapping_params[:join_db_id])
+    end
+    before_action only: [:new, :new_columns, :new_tables] do 
+        authorize_owner(params[:join_db])
+    end
+    before_action only: [:download_mapping] do 
+        authorize_owner(Mapping.find(params[:id]).join_db_id)
+    end
+
     def create
         begin
             mapping = Mapping.new(mapping_params)
