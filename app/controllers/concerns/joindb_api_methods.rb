@@ -224,10 +224,14 @@ module JoindbApiMethods
         conn = open_connection(db_name, db_host, username, password, port)
         conn.exec("CREATE EXTENSION IF NOT EXISTS fuzzystrmatch")
 
+        # IF the column names match, add a prefix so we can create them
+        prefix_one = column_one == column_two ? "t1_" : ""
+        prefix_two = column_one == column_two ? "t2_" : ""
+
         new_table_name = "mapping_#{table_one}_#{column_one}_#{table_two}_#{column_two}"
         conn.exec("CREATE TABLE #{new_table_name} AS
-            SELECT t1.#{column_one},
-            t2.#{column_two}
+            SELECT t1.#{column_one} AS #{prefix_one}#{column_one},
+            t2.#{column_two} AS #{prefix_two}#{column_two}
             FROM #{schema_one}.#{table_one} AS t1
             INNER JOIN #{schema_two}.#{table_two} AS t2
             ON metaphone(t1.#{column_one}, 4)
