@@ -24,11 +24,18 @@ class JoinDb < ApplicationRecord
             raise e
         end
 
-        # Add the user to it
-        # Wait a while to make sure this works
-        # TODO: Make this a callback based on success of create_join_db()
-        sleep(150)
-        JoindbApi.add_user(username, password, self)
+        # Loop until we can connect via postgres and create the user
+        while true
+            # Try to connect
+            begin
+                JoindbApi.add_user(username, password, self)
+            rescue PG::ConnectionBad
+                # If we get an error about the server not running, keep trying
+                sleep(10) 
+            else
+                break
+            end
+        end
 
         # Let them know it's ready
         user = User.find(self.user_id)
