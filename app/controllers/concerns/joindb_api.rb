@@ -88,6 +88,10 @@ module JoindbApi
         JoinDBApiMethods.open_connection(DB_NAME, join_db.host, join_db.username, password, join_db.port)
     end
 
+    def self.open_connection(join_db, password)
+        JoinDBApiMethods.open_connection(DB_NAME, join_db.host, join_db.username, password, join_db.port)
+    end
+
     def self.add_user(username, password, join_db)
         JoinDBApiMethods.add_user(username: username, password: password, db_host: join_db.host, db_name: DB_NAME, port: join_db.port)
     end

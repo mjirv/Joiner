@@ -10,10 +10,8 @@ module AwsFunctions
         is_team = ["team", "enterprise"].include? User.find(user_id).tier
         instance_id = run_new_join_db_task(ec2_client, is_team)
 
-        # Wait a little bit so it's created
-        # TODO: Make this a callback
-        
-        sleep(10)
+        # Wait until it's created to get the DNS name
+        ec2_client.wait_until(:instance_running, instance_ids: [instance_id])
         dns_name = get_join_db_public_dns_name(
             instance_id: instance_id,
             ec2_client: ec2_client
