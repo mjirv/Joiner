@@ -226,12 +226,12 @@ module JoindbApiMethods
 
         new_table_name = "mapping_#{table_one}_#{column_one}_#{table_two}_#{column_two}"
         conn.exec("CREATE TABLE #{new_table_name} AS
-            SELECT #{schema_one}.#{table_one}.#{column_one},
-            #{schema_two}.#{table_two}.#{column_two}
-            FROM #{schema_one}.#{table_one}
-            INNER JOIN #{schema_two}.#{table_two}
-            ON metaphone(#{schema_one}.#{table_one}.#{column_one}, 4)
-              = metaphone(#{schema_two}.#{table_two}.#{column_two}, 4)")
+            SELECT t1.#{column_one},
+            t2.#{column_two}
+            FROM #{schema_one}.#{table_one} AS t1
+            INNER JOIN #{schema_two}.#{table_two} AS t2
+            ON metaphone(t1.#{column_one}, 4)
+              = metaphone(t2.#{column_two}, 4)")
         conn.close()
         return new_table_name
     end
