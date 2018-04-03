@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
         else
             create_error_notification(
                 current_user.id,
-                "Hey, that JoinDb doesn't belong to you! (Or we couldn't connect,
+                "Hey, that Warehouse doesn't belong to you! (Or we couldn't connect,
                 so try again in a few minutes.)"
             )
             redirect_to '/'
