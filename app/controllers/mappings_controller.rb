@@ -1,19 +1,24 @@
 class MappingsController < ApplicationController
     def create
-        mapping = Mapping.new(mapping_params)
-        if create_mapping(
-            join_db: JoinDb.find(mapping_params[:join_db_id]),
-            remote_db_one: RemoteDb.find(mapping_params[:remote_db_one]),
-            table_one: mapping_params[:table_one],
-            column_one: mapping_params[:column_one],
-            remote_db_two: RemoteDb.find(mapping_params[:remote_db_two]), 
-            table_two: mapping_params[:table_two], 
-            column_two: mapping_params[:column_two], 
-            password: session[:join_db_password]
-        )
-            mapping.save!
-        else
-            raise "Your mapping could not be saved"
+        begin
+            mapping = Mapping.new(mapping_params)
+            if create_mapping(
+                join_db: JoinDb.find(mapping_params[:join_db_id]),
+                remote_db_one: RemoteDb.find(mapping_params[:remote_db_one]),
+                table_one: mapping_params[:table_one],
+                column_one: mapping_params[:column_one],
+                remote_db_two: RemoteDb.find(mapping_params[:remote_db_two]), 
+                table_two: mapping_params[:table_two], 
+                column_two: mapping_params[:column_two], 
+                password: session[:join_db_password]
+            )
+                mapping.save!
+            else
+                raise "Your mapping could not be saved"
+            end
+        rescue Exception => e
+            create_error_notification(current_user.id,
+            "There was a problem creating your mapping: #{e}")
         end
 
         redirect_to join_db_mappings_path(mapping_params[:join_db_id])
