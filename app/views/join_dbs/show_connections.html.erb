@@ -1,5 +1,20 @@
 <%= render partial: 'join_dbs/menu', locals: {overview_active: '', connections_active: 'active', mapping_active: ''} %>
 <br />
-<%= render partial: 'join_dbs/add_connection' %>
+<div class="columns">
+    <!-- Blurb about what this is -->
+    <div class="column col-6 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title h5">Info</div>
+            </div>
+            <div class="card-body">
+                <p>Your Joiner Warehouse is where you can bring all your data sources together. Use SQL to query across your files and databases or download your tables to do work in Excel.</p>
+            </div>
+        </div>
+    </div>
+    <div class="column col-6 col-xs-12">
+        <%= render partial: 'join_dbs/add_connection' %>
+    </div>
+</div>
 <br />
 <%= render partial: 'join_dbs/connections' %>

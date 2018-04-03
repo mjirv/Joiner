@@ -11,7 +11,7 @@
                 </div>
                 <% if rdb.table_name or (not rdb.csv? and rdb.get_join_db_schema_name) %>
                     <p>
-                        <em>In your JoinDb as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
+                        <em>In your Warehouse as: <%= rdb.csv? ? "table import.#{rdb.table_name}" : "schema #{rdb.get_join_db_schema_name.downcase}" %></em>
                     </p>
                 <% end %>
             </div>

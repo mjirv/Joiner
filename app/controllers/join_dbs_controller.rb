@@ -152,7 +152,7 @@ class JoinDbsController < ApplicationController
         ).count > 0
             create_error_notification(
                 current_user.id,
-                "Please upgrade to create more than one JoinDB. Contact us at michael@getjoiner.com to upgrade!"
+                "Please upgrade to create more than one Warehouse. Contact us at michael@getjoiner.com to upgrade!"
             )
             redirect_to '/' and return
         end
