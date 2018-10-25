@@ -51,7 +51,8 @@ class RemoteDbsController < ApplicationController
             uploaded_file = rdb_params[:csv]
 
             # Validate that it's a CSV
-            if uploaded_file.content_type != 'text/csv'
+            # second type is what Chrome calls CSVs from Windows
+            if ['text/csv', 'application/vnd.ms-excel'].exclude? uploaded_file.content_type
                 create_error_notification(
                     current_user.id,
                     "Error creating your Connection. Error was: Not a CSV file."
